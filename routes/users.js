@@ -249,7 +249,7 @@ passport.use(new LocalStrategy(
 passport.use(new FacebookStrategy({
         clientID: 308956806118166,
         clientSecret: 'c92e9be2bca727220452aba0812a7d25',
-        callbackURL: "http://inz.herokuapp.com/users/logfb/return"
+        callbackURL: "https://inz.herokuapp.com/users/logfb/return"
     },
     // facebook will send back the token and profile
     function (token, refreshToken, profile, done) {
