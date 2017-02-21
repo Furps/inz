@@ -1,0 +1,59 @@
+<div class="container-fluid">
+    <div class="row top-offset">
+        <div class="col-md-5 col-md-offset-1">
+            {{#if errors}}
+                {{#each errors}}
+                    <div class="alert alert-danger">
+                        {{msg}}
+                    </div>
+                {{/each}}
+            {{/if}}
+            <form role="form" method="post" action="/users/register" class="animated slideInDown">
+                <div class="form-group">
+                    <label for="exampleInputLogin">
+                        Login
+                    </label>
+                    <input type="text" class="form-control" name="login" id="exampleInputLogin" placeholder="Podaj login" />
+                </div>
+                <div class="form-group">
+
+                    <label for="exampleInputEmail">
+                        Email
+                    </label>
+                    <input type="email" class="form-control" name="email" id="exampleInputEmail" placeholder="Podaj email"/>
+                </div>
+                <div class="form-group">
+
+                    <label for="exampleInputPassword">
+                        Hasło
+                    </label>
+                    <input type="password" class="form-control" name="password" id="exampleInputPassword" placeholder="Podaj hasło"/>
+                </div>
+                <div class="form-group">
+
+                    <label for="exampleInputPassword2">
+                        Hasło
+                    </label>
+                    <input type="password" class="form-control" name="password2" id="exampleInputPassword2" placeholder="Powtórz hasło"/>
+                </div>
+                <input type="submit" class="btn btn-success btn-block" value="Zarejestruj">
+                <a class="btn btn-default btn-block" href="/">Powrót</a>
+                </form>
+        </div>
+        <div class="col-md-3 col-md-offset-2 text-center">
+            <img src="/images/img/grun.png" align="left">
+            <img src="/images/img/grun.png" align="right">
+                    <p class='extra-large'>45</p>
+                    <p>Graczy jest już z nami!</p>
+                    <p class='extra-large'>15</p>
+                    <p>Właśnie teraz gra!</p>
+            <img src="/images/img/grundown.png" align="left">
+            <img src="/images/img/grundown.png" align="right">
+             </div>
+       </div>
+
+
+    </div>
+
+
+<script src="/javascripts/http_code.jquery.com_jquery-1.11.1.js"></script>

@@ -1,0 +1,339 @@
+<body class="game-image">
+<div class="container-fluid">
+
+    <div class="row">
+
+        <div class="col-lg-5 col-lg-offset-1 col-sm-6">
+            <div class="first-player-cards">
+            </div>
+            <p class="text-white first-player-login">Gracz 1</p>
+        </div>
+        <div class="col-lg-5 col-sm-6">
+            <div class="second-player-cards">
+            </div>
+            <p class="text-white second-player-login">Gracz 2</p>
+        </div>
+   </div>
+
+    <div class="row middle-cards">
+        <div class="col-lg-2 col-lg-offset-2 col-sm-4 first-card">
+        </div>
+        <div class="col-lg-2 col-lg-offset-1 col-sm-4 second-card">
+        </div>
+        <div class="col-lg-4 col-lg-offset-1 col-sm-4 third-card">
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-10 col-md-offset-2 mycards"></div>
+   </div>
+
+
+
+    <div class="row">
+        <div class="col-md-12">
+            <nav class="navbar navbar-default navbar-fixed-bottom">
+                    <div class="navbar-header">
+                        <a class="navbar-brand mylogin">{{user.login}}</a>
+                    </div>
+
+                    <div>
+                        <ul class="nav navbar-nav">
+                            <li ></i><a class="mypos">Pozycja</a></li>
+                            <li ><a class="bidwinner">Gracz</a></li>
+                            <li><a class="gamevalue">Wartość</a></li>
+                            <li><a class="declared">Gra</a></li>
+                            <li><a class="turn">Kolej</a></li>
+                        </ul>
+                    </div>
+
+            </nav>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="bid-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <div class="btn-group btn-group-justified">
+                    <a class="btn btn-default btn-lg bidvalue st-btn">18</a>
+                    <a class="btn btn-default btn-lg bidvalue nd-btn">20</a>
+                    <a class="btn btn-default btn-lg bidvalue rd-btn">22</a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-lg btn-block passbet" data-dismiss="modal">Pass</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="game-declaration">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body game-declaration-values">
+
+                <div class="firstclass">
+                    <legend>Podstawa</legend>
+                <div class="radio-inline">
+                    <label>
+                        <input type="radio" name="basic" value="clubs">
+                        Trefl
+                    </label>
+                </div>
+                <div class="radio-inline">
+                    <label>
+                        <input type="radio" name="basic" value="spades">
+                        Pik
+                    </label>
+                </div>
+                <div class="radio-inline">
+                    <label>
+                        <input type="radio" name="basic" value="hearts">
+                        Kier
+                    </label>
+                </div>
+               <div class="radio-inline">
+                    <label>
+                        <input type="radio" name="basic" value="diamonds">
+                        Karo
+                    </label>
+                </div>
+                <div class="radio-inline">
+                    <label>
+                        <input type="radio" name="basic" value="grand">
+                        Grand
+                    </label>
+                </div>
+            <div class="radio-inline">
+                <label>
+                    <input type="radio" name="basic" value="null">
+                    Null
+                </label>
+            </div>
+            <div class="radio-inline">
+                <label>
+                    <input type="radio" name="basic" value="null ouvert">
+                    Null ouvert
+                </label>
+            </div>
+          </div>
+
+                <div class="secondclass">
+                    <legend>Mnożniki</legend>
+                    <div class="radio-inline">
+                        <label>
+                            <input type="radio" name="extrapoint"  value="schneider">
+                            Krawiec
+                        </label>
+                    </div>
+                    <div class="radio-inline">
+                        <label>
+                            <input type="radio" name="extrapoint"  value="schwarz">
+                            Na czarno
+                        </label>
+                    </div>
+                    <div class="radio-inline">
+                        <label>
+                            <input type="radio" name="extrapoint" value="ouvert">
+                            Otwarta
+                        </label>
+                    </div>
+                </div>
+
+        </div>
+            <div class="modal-footer">
+                <a class="btn btn-success" id="declaredgame">Zatwierdź</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="confirm-bet">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title askedvalue">18 ?</h4>
+            </div>
+            <div class="modal-body">
+                <a class="btn btn-success btn-block btn-lg confirmyes">Tak</a>
+                <a class="btn btn-danger  btn-block btn-lg confirmpass">Pass</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id='ask-eighteen'>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">18 ?</h4>
+            </div>
+            <div class="modal-body">
+                <a class="btn btn-success btn-lg btn-block yeseighteen">Tak</a>
+                <a class="btn btn-danger btn-lg btn-block noeighteen">Pass</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="ask-about-skat">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Wziąć Skat?</h4>
+            </div>
+            <div class="modal-body text-center">
+                <img src=/images/Cards/All/back.png>
+                <img src=/images/Cards/All/back.png>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-success pickskatyes">Tak</a>
+                <a class="btn btn-danger  pickskatno">Nie</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="results">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Wynik rozgrywki</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4 col-sm-6 text-center player-info">
+                        <span class="fa-stack fa-2x">
+                        <i class="fa fa-square fa-stack-2x text-info"></i>
+                        <i class="fa fa-user fa-stack-1x fa-inverse"></i>
+                    </span>
+                        <p class='player'>test35</p>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6 text-center result-info">
+                        <span class="fa-stack fa-2x">
+                        <i class="fa fa-square fa-stack-2x text-info"></i>
+                        <i class="fa fa-trophy fa-stack-1x fa-inverse"></i>
+                    </span>
+                        <p class="result">Wygrał</p>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6 text-center matadors-info">
+                        <span class="fa-stack fa-2x">
+                        <i class="fa fa-square fa-stack-2x text-info"></i>
+                        <i class="fa-stack-1x fa-inverse matadors">2</i>
+                    </span>
+                        <p>Szczyty</p>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6 text-center bidvalue-info">
+                        <span class="fa-stack fa-2x">
+                        <i class="fa fa-square fa-stack-2x text-info"></i>
+                        <i class="fa fa-flag fa-stack-1x fa-inverse"></i>
+                    </span>
+                        <p class="bidvalue">Zadeklarował 18</p>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6 text-center declarerpoints-info">
+                        <span class="fa-stack fa-2x">
+                        <i class="fa fa-square fa-stack-2x text-info"></i>
+                        <i class="fa fa-flag-checkered fa-stack-1x fa-inverse"></i>
+                    </span>
+                        <p class="declarerpoints">Uzyskał 22</p>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6 text-center value-info">
+                        <span class="fa-stack fa-2x">
+                        <i class="fa fa-square fa-stack-2x text-info"></i>
+                        <i class="fa-stack-1x fa-inverse value">120</i>
+                    </span>
+                        <p>Punkty</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-success playanotherone">Kolejna partia</a>
+                <a class="btn btn-danger leavegame">Opuść rozgrywkę</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="leave">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Wykryto rozłączenie</h4>
+            </div>
+            <div class="modal-body">
+                <i class="fa fa-exclamation-triangle fa-3x fa-pull-left fa-border text-warning" aria-hidden="true"></i>
+                Gracz lub gracze opuścili rozgrywkę.
+                Możesz zaczekać na innych graczy lub również opuścić rozgrywkę.
+                Rezultat tej gry nie zostanie zapisany w statystykach.
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-danger leavegame">Opuść rozgrywkę</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="passes">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Gracze spasowali</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-4 col-sm-6 text-center">
+                        <span class="fa-stack fa-2x">
+                        <i class="fa fa-square fa-stack-2x text-info"></i>
+                        <i class="fa fa-user fa-stack-1x fa-inverse"></i>
+                    </span>
+                        <p class='f-player'>A</p>
+                        <p><span class="label label-danger">Pass</span></p>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6 text-center ">
+                        <span class="fa-stack fa-2x">
+                        <i class="fa fa-square fa-stack-2x text-info"></i>
+                        <i class="fa fa-user fa-stack-1x fa-inverse"></i>
+                    </span>
+                        <p class="s-player">B</p>
+                        <p><span class="label label-danger">Pass</span></p>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6 text-center ">
+                        <span class="fa-stack fa-2x">
+                        <i class="fa fa-square fa-stack-2x text-info"></i>
+                        <i class="fa fa-user fa-stack-1x fa-inverse"></i>
+                    </span>
+                        <p class="t-player">C</p>
+                        <p><span class="label label-danger">Pass</span></p>
+                    </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-success playanotherone">Kolejna partia</a>
+                <a class="btn btn-danger leavegame">Opuść rozgrywkę</a>
+            </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+<script src="/javascripts/socket.io.js"></script>
+<script src="/javascripts/http_code.jquery.com_jquery-1.11.1.js"></script>
+<script src="/javascripts/gameclient.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+

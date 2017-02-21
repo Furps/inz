@@ -1,0 +1,160 @@
+<body class="chat-image">
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-lg-2 col-xs-12 col-lg-push-10">
+            <div class="list-group text-center">
+                <a href="/users/rooms" class="list-group-item"><i class="fa fa-cubes" aria-hidden="true"></i> Pokoje</a>
+                <a id="acc-options" class="list-group-item"><i class="fa fa-cogs" aria-hidden="true"></i> Opcje</a>
+                <a id="acc-stats" class="list-group-item"><i class="fa fa-line-chart" aria-hidden="true"></i> Statystyki</a>
+                <a href="/users/logout" id="acc-stats" class="list-group-item"><i class="fa fa-sign-out" aria-hidden="true"></i> Wyloguj się</a>
+            </div>
+        </div>
+        <div id="lobby-well" class="col-lg-8 col-xs-12 col-lg-pull-2">
+            <div id="messages"></div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="navbar navbar-fixed-bottom">
+            <form action="">
+                <div class="col-lg-11 col-md-10 col-sm-10 col-xs-8">
+                    <div class="form-group has-success">
+                        <label class="control-label" for="inputSuccess">Wyślij wiadomość</label>
+                        <input type="text" class="form-control" autocomplete="off" id="m">
+                    </div>
+                </div>
+                <div class="col-lg-1 col-md-2 col-sm-2 col-xs-4">
+                    <button class='btn btn-success button-top-offset'>Wyślij</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal" id="acc-options-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Opcje</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <h3 class="text-center">Talia kart</h3>
+                    <div class="col-md-6">
+                        <div class="thumbnail">
+                            <img alt="French Card Example Ace of Clubs" src="/images/Cards/All/Clubs/AoC.png" class="animated slideInDown" />
+                            <div class="caption animated slideInUp">
+                                <p>
+                                    <button id='frsuit' class="btn btn-primary btn-sm btn-block">Francuskie</button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="thumbnail">
+                            <img alt="German Card Example Ace of Clubs" src="/images/Cards/All/Kreuz/AoK.png" class="animated slideInDown" />
+                            <div class="caption animated slideInUp">
+                                <p>
+                                    <button id='gersuit' class="btn btn-primary btn-sm btn-block">Niemieckie</button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-grey" data-dismiss="modal">Zamknij</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="acc-stats-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Statystyki</h4>
+            </div>
+            <div class="modal-body">
+                <div class=" row error">
+                    <div class="col-lg-4 col-lg-offset-4 col-sm-6 col-sm-offset-6 text-center">
+                        <i class="fa fa-spinner fa-pulse fa-3x fa-fw"></i>
+                        <h4></h4>
+                        <p></p>
+                    </div>
+                </div>
+
+                <div class="row success">
+
+                    <div class="col-lg-4 col-sm-6 text-center animated bounceInDown">
+                     <span class="fa-stack fa-2x">
+                        <i class="fa fa-circle fa-stack-2x text-info"></i>
+                        <i class="fa fa-gamepad fa-stack-1x fa-inverse"></i>
+                    </span>
+                        <h4 class="played">18</h4>
+                        <p>Rozegranych gier</p>
+                    </div>
+
+
+                    <div class="col-lg-4 col-sm-6 text-center animated bounceInDown">
+                     <span class="fa-stack fa-2x">
+                        <i class="fa fa-circle fa-stack-2x text-info"></i>
+                        <i class="fa fa-trophy fa-stack-1x fa-inverse"></i>
+                    </span>
+                        <h4 class="won">7</h4>
+                        <p>Wygranych gier</p>
+                    </div>
+
+                    <div class="col-lg-4 col-sm-6 text-center animated bounceInDown">
+                      <span class="fa-stack fa-2x">
+                        <i class="fa fa-circle fa-stack-2x text-info"></i>
+                        <i class="fa fa-gavel fa-stack-1x fa-inverse"></i>
+                    </span>
+                        <h4 class="declared">18</h4>
+                        <p>Najwyższa zadeklarowana wartość</p>
+                    </div>
+
+                    <div class="col-lg-4 col-sm-6 text-center animated bounceInUp">
+                      <span class="fa-stack fa-2x">
+                        <i class="fa fa-circle fa-stack-2x text-info"></i>
+                        <i class="fa fa-bar-chart fa-stack-1x fa-inverse"></i>
+                    </span>
+                        <h4 class="color">1</h4>
+                        <p>Wygrana zadeklarowana gra typu kolor</p>
+                    </div>
+
+                    <div class="col-lg-4 col-sm-6 text-center animated bounceInUp">
+                      <span class="fa-stack fa-2x">
+                        <i class="fa fa-circle fa-stack-2x text-info"></i>
+                        <i class="fa fa-bar-chart fa-stack-1x fa-inverse"></i>
+                    </span>
+                        <h4 class="grand">2</h4>
+                        <p>Wygrana zadeklarowana gra typu grand</p>
+                    </div>
+
+                    <div class="col-lg-4 col-sm-6 text-center animated bounceInUp">
+                       <span class="fa-stack fa-2x">
+                        <i class="fa fa-circle fa-stack-2x text-info"></i>
+                        <i class="fa fa-bar-chart fa-stack-1x fa-inverse"></i>
+                    </span>
+                        <h4 class="null">1</h4>
+                        <p>Wygrana zadeklarowana gra typu null</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-grey" data-dismiss="modal">Zamknij</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+
+<script src="/javascripts/socket.io.js"></script>
+<script src="/javascripts/http_code.jquery.com_jquery-1.11.1.js"></script>
+<script src="/javascripts/chatclient.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
