@@ -440,7 +440,7 @@ $(document).ready(function () {
     function sendStats(data) {
         $.ajax({
             type: "POST",
-            url: 'https://inz.herokuapp.com/users/game/' + room,
+            url: 'http://inz.herokuapp.com/users/game/' + room,
             data: data,
             dataType: "json",
             success: function (data) {
@@ -484,7 +484,7 @@ $(document).ready(function () {
     socket.emit('check if can be in room', room);
 
     socket.on('access forbbiden', function () {
-        window.open("https://inz.herokuapp.com/users/lobby/","_self");
+        window.open("http://inz.herokuapp.com/users/lobby/","_self");
     });
 
 
@@ -1063,7 +1063,7 @@ $(document).ready(function () {
 
     $('.leavegame').on('click', function () {
         socket.emit('leave game', room, $('.mylogin').text());
-        window.open("https://inz.herokuapp.com/users/lobby", "_self");
+        window.open("http://inz.herokuapp.com/users/lobby", "_self");
         closeResult = true;
         closePass = true;
     });

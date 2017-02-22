@@ -40,7 +40,7 @@ $(document).ready(function(){
     });
 
     socket.on('start game', function(room){
-        window.open("https://inz.herokuapp.com/users/game/"+room,"_self");
+        window.open("http://inz.herokuapp.com/users/game/"+room,"_self");
     });
 
 

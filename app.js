@@ -14,6 +14,7 @@ var MongoDBStore = require('connect-mongodb-session')(session);
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var passportSocketIo = require("passport.socketio");
+var favicon = require('serve-favicon');
 
 var data = [];
 var BidList = [];
@@ -120,6 +121,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
+
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
