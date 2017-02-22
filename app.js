@@ -15,7 +15,6 @@ var routes = require('./routes/index');
 var users = require('./routes/users');
 var passportSocketIo = require("passport.socketio");
 var favicon = require('serve-favicon');
-
 var data = [];
 var BidList = [];
 var CardList = [];
@@ -25,7 +24,6 @@ var Cards = [];
 var RoomList = [];
 var ComputerList = [];
 var bidvalues = [];
-
 for (var i = 1; i <=14; i++) {
     var newRoom = {
         number: i,
@@ -36,7 +34,6 @@ for (var i = 1; i <=14; i++) {
     };
     RoomList.push(newRoom);
 }
-
 for (var i = 15; i <= 18; i++) {
     var newRoom = {
         number: i,
@@ -47,22 +44,16 @@ for (var i = 15; i <= 18; i++) {
     };
     RoomList.push(newRoom);
 }
-
 createBidValues();
 sortBidValues();
 bidvalues = removeDuplicates(bidvalues);
-
 var app = express();
-// call socket.io to the app
 app.io = require('socket.io')();
-
 var store = new MongoDBStore(
     {
         uri: 'mongodb://Lukas:Inzynier2017@ds019996.mlab.com:19996/mongodb_session',
         collection: 'mysessions'
     });
-
-
 app.use(session({
     secret: 'secret',
     saveUninitialized: true,
@@ -72,13 +63,8 @@ app.use(session({
     store: store,
     resave: true
 }));
-
-
-//Passport init
 app.use(passport.initialize());
 app.use(passport.session());
-
-//express validator
 app.use(expressValidator({
     errorFormatter: function (param, msg, value) {
         var namespace = param.split('.')
@@ -95,46 +81,28 @@ app.use(expressValidator({
         };
     }
 }));
-
-//Connect Flash
 app.use(flash());
-
-//Global variables
 app.use(function (req, res, next) {
     res.locals.success_msg = req.flash('success_msg');
     res.locals.error_msg = req.flash('error_msg');
     res.locals.error = req.flash('error');
     next();
 });
-
-// view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
 app.use('/', routes);
 app.use('/users', users);
-
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-
-// catch 404 and forward to error handler
 app.use(function (req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
-
-// error handlers
-
-// development error handler
-// will print stacktrace
 if (app.get('env') === 'development') {
     app.use(function (err, req, res, next) {
         res.status(err.status || 500);
@@ -144,9 +112,6 @@ if (app.get('env') === 'development') {
         });
     });
 }
-
-// production error handler
-// no stacktraces leaked to user
 app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('error', {
@@ -154,23 +119,16 @@ app.use(function (err, req, res, next) {
         error: {}
     });
 });
-
-
-//With Socket.io >= 1.0
 app.io.use(passportSocketIo.authorize({
-    cookieParser: cookieParser,       // the same middleware you registrer in express
-    secret:       'secret',  // the session_secret to parse the cookie
+    cookieParser: cookieParser, 
+    secret:       'secret', 
     store:        store
 }));
-
-// start listen with socket.io
 app.io.on('connection', function (socket) {
 socket.from = 'start';
 socket.room = 'none';
 socket.login = socket.request.user.user.login;
 socket.userid = socket.request.user.id;
-
-        //chat
     socket.on('chat message', function (msg){
         socket.from = 'chat';
         var hours = new Date().getHours() + 1;
@@ -183,13 +141,10 @@ socket.userid = socket.request.user.id;
         socket.broadcast.emit('chat message', socket.login, msg, time);
         socket.emit('my message',  socket.login, msg, time);
     });
-
-    //rooms
     socket.on('get rooms', function () {
         socket.from = 'rooms';
         socket.emit('rooms status', RoomList);
     });
-
     socket.on('take a sit', function (room){
        var objRoom = getRoomObj(room);
        if(objRoom.type.trim() === 'people') {
@@ -206,7 +161,6 @@ socket.userid = socket.request.user.id;
                ids.push(socket.userid);
                app.io.emit('rooms status', RoomList);
            }
-
            if (objRoom.place === 3) {
                socket.from = 'none';
                createGame(room);
@@ -227,7 +181,6 @@ socket.userid = socket.request.user.id;
                ids.push(socket.userid);
                app.io.emit('rooms status', RoomList);
            }
-
            if (objRoom.place === 2){
                socket.from = 'none';
                var players = objRoom.players;
@@ -240,12 +193,10 @@ socket.userid = socket.request.user.id;
            }
        }
     });
-
     socket.on('stand', function (){
         var objRoom = getRoomObj(socket.room);
         var players = objRoom.players;
         var ids = objRoom.ids;
-
         for(var i=0;i<players.length;i++){
             if(players[i].trim() === socket.login){
                 players = deleteFromArray(players, i);
@@ -257,13 +208,11 @@ socket.userid = socket.request.user.id;
                 objRoom.place = place;
             }
         }
-
         for(var i=0;i<ids.length;i++){
             if(ids[i].trim() === socket.userid){
                 ids= deleteFromArray(ids, i);
             }
         }
-
         objRoom.players = players;
         objRoom.ids = ids;
         socket.leave('room'+socket.room);
@@ -271,7 +220,6 @@ socket.userid = socket.request.user.id;
         socket.from = 'none';
         app.io.emit('rooms status', RoomList);
     });
-
     socket.on('disconnect', function () {
         var objRoom = getRoomObj(socket.room);
         var players = objRoom.players;
@@ -375,10 +323,7 @@ socket.userid = socket.request.user.id;
                 app.io.in(socket.room).emit('leave message');
                 break;
         }
-
     });
-
-    //game
     socket.on('check if can be in room', function (room){
         var objRoom = getRoomObj(room);
         var ids = objRoom.ids;
@@ -392,14 +337,10 @@ socket.userid = socket.request.user.id;
         if(exist === false){
           socket.emit('access forbbiden');
         }else{
-            /*
-             1. Jeżeli zbierze się 3 graczy dopiero wtedy losowane są karty i rozdzielane. Ma to zapobiec wielokrotnemu rozdawaniu kart
-             */
             socket.join(room);
             socket.from = 'game';
             socket.room = room;
             var objRoom = getRoomObj(room);
-
             if(objRoom.type.trim() === 'people') {
                 if (app.io.sockets.adapter.rooms[room].length == 3) {
                     var objGame = getGameObj(room);
@@ -440,7 +381,6 @@ socket.userid = socket.request.user.id;
                             objComputer.cards = card.player3;
                             break;
                     }
-
                     getComputerHand(objComputer.cards, room);
                     deleteBid(room);
                     createBid(room);
@@ -463,14 +403,11 @@ socket.userid = socket.request.user.id;
             }
         }
     });
-
     socket.on('send cards suit', function (){
         socket.emit('set cards suit', socket.request.user.user.suits);
         var objCards = getCardsObj(socket.room);
         socket.emit('send cards', objCards);
     });
-
-
     socket.on('bid value', function (room, bidvalue) {
         var objBid = getBidObj(room);
         var objComputer = getComputerObj(room);
@@ -488,7 +425,6 @@ socket.userid = socket.request.user.id;
             app.io.in(room).emit('ask bid', bidvalue, objBid.a);
         }
     });
-
     socket.on('confirm bid value', function (room) {
         var objBid = getBidObj(room);
         var objComputer = getComputerObj(room);
@@ -503,7 +439,6 @@ socket.userid = socket.request.user.id;
             app.io.in(room).emit('bid', bidvalues[val+1],bidvalues[val+2],bidvalues[val+3], objBid.q);
         }
     });
-
     socket.on('ask skat', function (room) {
     var objBid = getBidObj(room);
      if(objBid.bidwinner.trim() === 'komputer'){
@@ -519,10 +454,8 @@ socket.userid = socket.request.user.id;
          for(var j=0;j<objCards.skat.length;j++){
              skatcards.push(objCards.skat[j].substr(objCards.skat[j].indexOf("id")+3,2));
          }
-
          cards.push(skatcards[0]);
          cards.push(skatcards[1]);
-
          if(objComputer !== undefined){
              if(objComputer.pickskat.trim() === 'yes'){
                  //bierzemy karty i dodajemy do puli komputera on 2 wydaje
@@ -539,7 +472,6 @@ socket.userid = socket.request.user.id;
                                  }
                              }
                          }
-
                          var figures = [];
                          figures[0] = 'A';
                          figures[1] = 'T';
@@ -562,15 +494,12 @@ socket.userid = socket.request.user.id;
                                  }
                              }
                          }
-
-
                          cards = [];
                          skatcards = [];
                          var tempcards = objComputer.cards;
                          var tempskatcards = objCards.skat;
                          tempcards.push(tempskatcards[0]);
                          tempcards.push(tempskatcards[1]);
-                         //zamiana z postaci id -> kartę
                          for(var i=0;i<newcards.length;i++){
                              for(var j=0;j<tempcards.length;j++) {
                                  if (tempcards[j].substr(tempcards[j].indexOf("id") + 3, 2) === newcards[i]) {
@@ -578,7 +507,6 @@ socket.userid = socket.request.user.id;
                                  }
                              }
                          }
-
                          for(var i=0;i<newskatcards.length;i++){
                              for(var j=0;j<tempcards.length;j++){
                                  if (tempcards[j].substr(tempcards[j].indexOf("id") + 3, 2) === newskatcards[i]) {
@@ -600,7 +528,6 @@ socket.userid = socket.request.user.id;
                                  }
                              }
                          }
-
                          var figures = [];
                          figures[0] = 'A';
                          figures[1] = 'T';
@@ -609,7 +536,6 @@ socket.userid = socket.request.user.id;
                          figures[4] = '9';
                          figures[5] = '8';
                          figures[6] = '7';
-
                          for(var i=0;i<figures.length;i++){
                              for(var j=0;j<cards.length;j++){
                                  if(newcards.length < 10) {
@@ -623,15 +549,12 @@ socket.userid = socket.request.user.id;
                                  }
                              }
                          }
-
-
                          cards = [];
                          skatcards = [];
                          var tempcards = objComputer.cards;
                          var tempskatcards = objCards.skat;
                          tempcards.push(tempskatcards[0]);
                          tempcards.push(tempskatcards[1]);
-                         //zamiana z postaci id -> kartę
                          for(var i=0;i<newcards.length;i++){
                              for(var j=0;j<tempcards.length;j++) {
                                  if (tempcards[j].substr(tempcards[j].indexOf("id") + 3, 2) === newcards[i]) {
@@ -639,7 +562,6 @@ socket.userid = socket.request.user.id;
                                  }
                              }
                          }
-
                          for(var i=0;i<newskatcards.length;i++){
                              for(var j=0;j<tempcards.length;j++){
                                  if (tempcards[j].substr(tempcards[j].indexOf("id") + 3, 2) === newskatcards[i]) {
@@ -661,7 +583,6 @@ socket.userid = socket.request.user.id;
                                  }
                              }
                          }
-
                          var figures = [];
                          figures[0] = 'A';
                          figures[1] = 'T';
@@ -684,15 +605,12 @@ socket.userid = socket.request.user.id;
                                  }
                              }
                          }
-
-
                          cards = [];
                          skatcards = [];
                          var tempcards = objComputer.cards;
                          var tempskatcards = objCards.skat;
                          tempcards.push(tempskatcards[0]);
                          tempcards.push(tempskatcards[1]);
-                         //zamiana z postaci id -> kartę
                          for(var i=0;i<newcards.length;i++){
                              for(var j=0;j<tempcards.length;j++) {
                                  if (tempcards[j].substr(tempcards[j].indexOf("id") + 3, 2) === newcards[i]) {
@@ -700,7 +618,6 @@ socket.userid = socket.request.user.id;
                                  }
                              }
                          }
-
                          for(var i=0;i<newskatcards.length;i++){
                              for(var j=0;j<tempcards.length;j++){
                                  if (tempcards[j].substr(tempcards[j].indexOf("id") + 3, 2) === newskatcards[i]) {
@@ -722,7 +639,6 @@ socket.userid = socket.request.user.id;
                                  }
                              }
                          }
-
                          var figures = [];
                          figures[0] = 'A';
                          figures[1] = 'T';
@@ -731,7 +647,6 @@ socket.userid = socket.request.user.id;
                          figures[4] = '9';
                          figures[5] = '8';
                          figures[6] = '7';
-
                          for(var i=0;i<figures.length;i++){
                              for(var j=0;j<cards.length;j++){
                                  if(newcards.length < 10) {
@@ -745,15 +660,12 @@ socket.userid = socket.request.user.id;
                                  }
                              }
                          }
-
-
                          cards = [];
                          skatcards = [];
                          var tempcards = objComputer.cards;
                          var tempskatcards = objCards.skat;
                          tempcards.push(tempskatcards[0]);
                          tempcards.push(tempskatcards[1]);
-                         //zamiana z postaci id -> kartę
                          for(var i=0;i<newcards.length;i++){
                              for(var j=0;j<tempcards.length;j++) {
                                  if (tempcards[j].substr(tempcards[j].indexOf("id") + 3, 2) === newcards[i]) {
@@ -761,7 +673,6 @@ socket.userid = socket.request.user.id;
                                  }
                              }
                          }
-
                          for(var i=0;i<newskatcards.length;i++){
                              for(var j=0;j<tempcards.length;j++){
                                  if (tempcards[j].substr(tempcards[j].indexOf("id") + 3, 2) === newskatcards[i]) {
@@ -800,7 +711,6 @@ socket.userid = socket.request.user.id;
                          var tempskatcards = objCards.skat;
                          tempcards.push(tempskatcards[0]);
                          tempcards.push(tempskatcards[1]);
-                         //zamiana z postaci id -> kartę
                          for(var i=0;i<newcards.length;i++){
                              for(var j=0;j<tempcards.length;j++) {
                                  if (tempcards[j].substr(tempcards[j].indexOf("id") + 3, 2) === newcards[i]) {
@@ -808,7 +718,6 @@ socket.userid = socket.request.user.id;
                                  }
                              }
                          }
-
                          for(var i=0;i<newskatcards.length;i++){
                              for(var j=0;j<tempcards.length;j++){
                                  if (tempcards[j].substr(tempcards[j].indexOf("id") + 3, 2) === newskatcards[i]) {
@@ -855,7 +764,6 @@ socket.userid = socket.request.user.id;
                                  }
                              }
                          }
-
                          for(var i=0;i<newskatcards.length;i++){
                              for(var j=0;j<tempcards.length;j++){
                                  if (tempcards[j].substr(tempcards[j].indexOf("id") + 3, 2) === newskatcards[i]) {
@@ -870,11 +778,8 @@ socket.userid = socket.request.user.id;
                  skatcards = objCards.skat;
 
              }
-
              socket.emit('computer declared game',skatcards, objComputer.basic.trim(), objComputer.extra, objComputer.pickskat.trim());
              app.io.in(room).emit('update declared game', skatcards, objComputer.basic.trim(), objComputer.extra, objComputer.pickskat.trim());
-
-             //do tego ustalenie czy pokazac karty
              if (objComputer.basic.trim() === 'null ouvert'  || objComputer.extra === 'ouvert'){
                  socket.emit('computer show declarer cards', objComputer.position.trim(), objComputer.cards);
              }
@@ -883,12 +788,9 @@ socket.userid = socket.request.user.id;
             app.io.in(room).emit('ask skat', objBid.bidwinner);
         }
     });
-
     socket.on('three passes', function (room) {
         app.io.in(room).emit('three passes');
     });
-
-
     socket.on('pass bid', function (room, passed) {
        var RoomObj = getRoomObj(room);
         switch(RoomObj.type.trim()){
@@ -903,14 +805,12 @@ socket.userid = socket.request.user.id;
                         case 'srodek' :  objBid.q = 'zadek'; break;
                         case 'przodek':  objBid.q = 'zadek'; objBid.a = 'srodek'; break;
                     }
-
                     if (objBid.bidpos !== null) {
                         var val = objBid.bidpos;
                         app.io.in(room).emit('bid', bidvalues[val+1],bidvalues[val+2],bidvalues[val+3], objBid.q);
                     } else {
                         app.io.in(room).emit('bid', bidvalues[0],bidvalues[1],bidvalues[2], objBid.q);
                     }
-
                     if( objBid.q.trim() === objComputer.position.trim()){
                         if(objComputer.bid >= 18 && objComputer.bid > objBid.bidvalue) {
                             objBid.bidvalue = objComputer.bid;
@@ -944,7 +844,6 @@ socket.userid = socket.request.user.id;
                     }
                     objBid.bidwinner = players[temp];
                     app.io.in(room).emit('bid winner', objBid.bidwinner);
-
                     if(objBid.bidwinner.trim() === 'komputer'){
                         if (objBid.first.trim() === 'srodek' && objBid.second.trim() === 'zadek' && objBid.bidpos === null) {
                             var objComputer = getComputerObj(room);
@@ -971,12 +870,7 @@ socket.userid = socket.request.user.id;
                 break;
         }
     });
-
     socket.on('declared game', function (room, skatid, basic, extra, pickskat) {
-        /*
-        1. Zapisywana jest zadeklarowana gra, to czy podniesiono Skata
-        2. Jeżeli została wysłana pozycja gracza oznacza to, że zadeklarowano grę gdzie pokazuje się karty.
-         */
         var objGame = getGameObj(room);
         var objDeclaration = getDeclarationObj(room);
         var objBid = getBidObj(room);
@@ -994,9 +888,7 @@ socket.userid = socket.request.user.id;
             app.io.in(room).emit('turn', objGame.turn);
         }
     });
-
     socket.on('show declarer cards', function (room, position, newcards) {
-
            var objGame = getGameObj(room);
            var objCards = getCardsObj(room);
            var objBid = getBidObj(room);
@@ -1013,14 +905,11 @@ socket.userid = socket.request.user.id;
                     app.io.in(room).emit('show cards', objBid.bidwinner.trim(), objCards.player3); break;
             }
     });
-
-
     socket.on('update declarer cards', function (room, position, cards) {
         var objGame = getGameObj(room);
         objGame.turn = getTurn(objGame.turn);
         app.io.in(room).emit('turn', objGame.turn);
     });
-
     socket.on('next turn', function (room) {
         var objGame = getGameObj(room);
         objGame.turn = getTurn(objGame.turn);
@@ -1031,11 +920,8 @@ socket.userid = socket.request.user.id;
             app.io.in(room).emit('turn', objGame.turn);
         }
     });
-
     socket.on('send card', function (room, card) {
-        // 1. Przesyłanie karty, którą wybrał gracz by pokazać ją innym graczom.
         var objCards = getCardsObj(room);
-
         if(objCards !== undefined){
             switch(socket.login.trim()){
                 case objCards.player1login.trim() :
@@ -1054,7 +940,6 @@ socket.userid = socket.request.user.id;
         }
         app.io.in(room).emit('send card', card, socket.login);
     });
-
     socket.on('add declarer cards', function (room, cards) {
             var objGame = getGameObj(room);
             var temp = objGame.deccards;
@@ -1067,7 +952,6 @@ socket.userid = socket.request.user.id;
             }
             objGame.deccards = temp;
     });
-
     socket.on('add opponents cards', function (room, cards) {
         var objGame = getGameObj(room);
         var temp = objGame.oppcards;
@@ -1080,7 +964,6 @@ socket.userid = socket.request.user.id;
         }
         objGame.oppcards = temp;
     });
-
     socket.on('clear table', function (room) {
         var objCards = getCardsObj(room);
         objCards.firstmiddle = null;
@@ -1090,7 +973,6 @@ socket.userid = socket.request.user.id;
         objGame.firstturn = null;
         app.io.in(room).emit('clear table');
     });
-
     socket.on('change turn', function (room, turn) {
         var objGame = getGameObj(room);
         var objComputer = getComputerObj(room);
@@ -1101,15 +983,7 @@ socket.userid = socket.request.user.id;
             app.io.in(room).emit('turn', objGame.turn);
         }
     });
-
     socket.on('zero cards', function (room) {
-        /*
-        1. Zebranie informacji ilu graczy nie posiada już kart.
-        2. Gdy kart nie posiada 3 graczy obliczane są punkty.
-        3. Jeżeli zadeklarowana gra to null punkty są ustalone wg. zasad gry w Skata
-        4. Jeżeli to inny typ gry punkty muszą być obliczone na podstawie kart.
-        5. Wynik rozgrywki jest przedstawiony graczom.
-         */
         var objGame = getGameObj(room);
         var people = objGame.zerocards;
         if (people === null) {
@@ -1124,25 +998,19 @@ socket.userid = socket.request.user.id;
             }
         }
     });
-
     socket.on('first turn card', function (room, card, position) {
-        // 1. Zapamiętywana jest pierwsza karta. Ma to znaczenie m.in przy ustalaniu czy reszta graczy może pojechać danym kolorem.
         var objGame = getGameObj(room);
         objGame.firstturn = card;
         objGame.firstmovepos = position;
         app.io.in(room).emit('first turn card', objGame.firstturn, objGame.firstmovepos);
     });
-
     socket.on('send card to hide', function (room, card) {
         app.io.in(room).emit('hide card', card, socket.login);
     });
-
     socket.on('end lost null game', function (room){
-        // 1. Zakńczenie gry null - przegraną dla deklarującego grę.
         var objDeclaration = getDeclarationObj(room);
         var objBid = getBidObj(room);
         var points = 0;
-
         switch(objDeclaration.basic.trim()){
             case 'null':
                 if(objDeclaration.pickskat.trim() === 'yes') points = -46;
@@ -1160,33 +1028,26 @@ socket.userid = socket.request.user.id;
         app.io.in(room).emit('update status', 'przegrana');
         app.io.in(room).emit('send stats');
     });
-
     socket.on('leave game', function (room){
-        // 1. Użytkownik opuszcza grę - poprzez wybór
         socket.from = 'leave';
         deleteGame(room);
     });
-
     socket.on('checkColorTurnEnd client', function (room) {
         var objGame = getGameObj(room);
         var objCards = getCardsObj(room);
         checkColorTurnEnd(objGame, objCards, room);
     });
-
     socket.on('checkGrandTurnEnd client', function (room) {
         var objGame = getGameObj(room);
         var objCards = getCardsObj(room);
         checkGrandTurnEnd(objGame, objCards, room);
     });
-
     socket.on('checkNullTurnEnd client', function (room) {
         var objGame = getGameObj(room);
         var objCards = getCardsObj(room);
         checkNullTurnEnd(objGame, objCards, room);
     });
-
     socket.on('another one', function (room) {
-        //Rozegranie kolejnej partii
         var objRoom = getRoomObj(room);
         var objGame = getGameObj(room);
         if (objGame !== undefined) {
@@ -1200,7 +1061,6 @@ socket.userid = socket.request.user.id;
                     i = ids.length;
                 }
             }
-
             objGame.replay = replay;
             var howmany = objGame.howmany;
 
@@ -1287,8 +1147,6 @@ socket.userid = socket.request.user.id;
         }
     });
 });
-
-
 function createPlayersPos(room){
     var objRoom = getRoomObj(room);
     var objGame = getGameObj(room);
@@ -1299,7 +1157,6 @@ function createPlayersPos(room){
     positions[1] = 'srodek';
     positions[2] = 'przodek';
     objGame.positions = positions;
-
     if(objRoom.type.trim() === 'computer'){
        var players = objGame.players;
         var temp = -1;
@@ -1313,7 +1170,6 @@ function createPlayersPos(room){
         objComputer.position = positions[temp];
     }
 }
-
 function deleteFromArray(array, index){
     var newArray = [];
     for(var i=0;i<array.length;i++){
@@ -1337,7 +1193,6 @@ function createBid(room){
 
     BidList.push(NewBid);
 }
-
 function createDeclaration(room){
     var NewDeclaration = {
         room: room,
@@ -1349,7 +1204,6 @@ function createDeclaration(room){
 
     DeclarationList.push(NewDeclaration);
 }
-
 function createGame(room){
     var replay =[];
     replay[0] = false;
@@ -1373,7 +1227,6 @@ function createGame(room){
 
     GameList.push(NewGame);
 }
-
 function createComputer(room){
     var NewComputer = {
         room: room,
@@ -1387,7 +1240,6 @@ function createComputer(room){
 
     ComputerList.push(NewComputer);
 }
-
 function deleteComputer(room){
     var temp = [];
     for(var i=0;i<ComputerList.length;i++){
@@ -1397,7 +1249,6 @@ function deleteComputer(room){
     }
     ComputerList = temp;
 }
-
 function deleteBid(room){
     var temp = [];
 for(var i=0;i<BidList.length;i++){
@@ -1407,7 +1258,6 @@ for(var i=0;i<BidList.length;i++){
 }
 BidList = temp;
 }
-
 function deleteDeclaration(room){
     var temp = [];
     for(var i=0;i<DeclarationList.length;i++){
@@ -1417,7 +1267,6 @@ function deleteDeclaration(room){
     }
     DeclarationList = temp;
 }
-
 function deleteGame(room){
     var temp = [];
     for(var i=0;i<GameList.length;i++){
@@ -1427,7 +1276,6 @@ function deleteGame(room){
     }
     GameList = temp;
 }
-
 function deleteCards(room){
     Cards = [];
     var temp = [];
@@ -1438,54 +1286,39 @@ function deleteCards(room){
     }
     CardList = temp;
 }
-
 function shuffle(array) {
     var m = array.length, t, i;
-    // While there remain elements to shuffle…
     while (m) {
-        // Pick a remaining element…
         i = Math.floor(Math.random() * m--);
-        // And swap it with the current element.
         t = array[m];
         array[m] = array[i];
         array[i] = t;
     }
     return array;
 }
-
 function dealCards(room, cards){
     var player1 = [];
     var player2 = [];
     var player3 = [];
     var skat = [];
-
-    //Rozdawanie kart po 3 kazdemu graczowi
     for (var i = 0; i <= 8; i++) {
         if (i % 3 == 0) player1.push(cards[i]);
         if (i % 3 == 1) player2.push(cards[i]);
         if (i % 3 == 2) player3.push(cards[i]);
     }
-
-    //Rozdanie 2 kart do Skata
     skat.push(cards[9]);
     skat.push(cards[10]);
-
-    //Rozdanie po 4 karty kazdemu graczowi
     for (var i = 11; i <= 22; i++) {
         if (i % 3 == 0) player1.push(cards[i]);
         if (i % 3 == 1) player2.push(cards[i]);
         if (i % 3 == 2) player3.push(cards[i]);
     }
-
-    //Rozdanie 3 kart kazdemu graczowi
     for (i = 23; i <= 31; i++) {
         if (i % 3 == 0) player1.push(cards[i]);
         if (i % 3 == 1) player2.push(cards[i]);
         if (i % 3 == 2) player3.push(cards[i]);
     }
-
     var objGame = getGameObj(room);
-
     var NewCard = {
         room: room,
         player1login:objGame.players[0],
@@ -1499,10 +1332,8 @@ function dealCards(room, cards){
         secondmiddle:null,
         thirdmiddle:null
     };
-
     CardList.push(NewCard);
 }
-
 function getCardsObj(room) {
     var obj;
     for (var i = 0; i < CardList.length; i++) {
@@ -1511,21 +1342,18 @@ function getCardsObj(room) {
     }
     return obj;
 }
-
 function generateCards(array) {
     var Colors = [];
     Colors[0] = "Clubs";
     Colors[1] = "Spades";
     Colors[2] = "Hearts";
     Colors[3] = "Diamonds";
-
     var Figures = [];
     Figures[0] = "A";
     Figures[1] = "J";
     Figures[2] = "K";
     Figures[3] = "Q";
     Figures[4] = "T";
-
     for (var i = 7; i <= 9; i++) {
         for (var j = 0; j < Colors.length; j++) {
             var p = '<img src=';
@@ -1534,7 +1362,6 @@ function generateCards(array) {
             array.push(p + s + e);
         }
     }
-
     for (var k = 0; k < Figures.length; k++) {
         for (var j = 0; j < Colors.length; j++) {
             var p = '<img src=';
@@ -1545,7 +1372,6 @@ function generateCards(array) {
     }
     return array;
 }
-
 function getTurn(previousturn) {
     var temp = '';
     switch (previousturn) {
@@ -1561,18 +1387,11 @@ function getTurn(previousturn) {
     }
     return temp;
 }
-
 function checkWhoWin(room) {
-    /*
-     1. Sprawdzenie czy deklarujacy gre posiada jakies karty. Jeżeli nie - przegrana na czarno
-     2. Rozpoczynamy wyznaczenie układów aby móc obliczyć punkty.
-     */
-
     var objGame = getGameObj(room);
     var objDeclaration = getDeclarationObj(room);
     var objBid = getBidObj(room);
     var objCards = getCardsObj(room);
-
     var typeofgame = '';
     var cards = objGame.deccards;
     var matadors = 0;
@@ -1664,7 +1483,6 @@ function checkWhoWin(room) {
                         } else {
                             value *= -2;
                         }
-
                         if (won !== false) {
                             app.io.in(room).emit('update status', 'wygrana');
                         } else {
@@ -1675,7 +1493,6 @@ function checkWhoWin(room) {
                         }, 1000);
                         app.io.in(room).emit('send stats');
                         break;
-
                     default :
                         if (objDeclaration.basic.trim() === 'clubs' ||
                             objDeclaration.basic.trim() === 'spades' ||
@@ -1718,7 +1535,6 @@ function checkWhoWin(room) {
                             } else {
                                 value *= -2;
                             }
-
                             if (won !== false) {
                                 app.io.in(room).emit('update status', 'wygrana');
                             } else {
@@ -1741,9 +1557,7 @@ function checkWhoWin(room) {
            app.io.in(room).emit('send stats');
         }
     }
-
 }
-
 function searchJacks(cards) {
     var clear = [];
     if(cards.length > 0) {
@@ -1755,14 +1569,12 @@ function searchJacks(cards) {
     }
     return clear;
 }
-
 function orderJacks(cards) {
     var order = [];
     order[0] = 'C';
     order[1] = 'S';
     order[2] = 'H';
     order[3] = 'D';
-
     var clear = [];
     if(cards.length > 0) {
         for (var i = 0; i < order.length; i++) {
@@ -1775,14 +1587,12 @@ function orderJacks(cards) {
     }
     return clear;
 }
-
 function orderdescJacks(cards) {
     var order = [];
     order[0] = 'D';
     order[1] = 'H';
     order[2] = 'S';
     order[3] = 'C';
-
     var clear = [];
     if(cards.length > 0) {
         for (var i = 0; i < order.length; i++) {
@@ -1795,7 +1605,6 @@ function orderdescJacks(cards) {
     }
     return clear;
 }
-
 function countJacksForBid(cards){
     var order = [];
     order[0] = 'C';
@@ -1828,7 +1637,6 @@ function countJacksForBid(cards){
     }
     return jacks;
 }
-
 function countJacks(cards) {
     var order = [];
     order[0] = 'C';
@@ -1836,7 +1644,6 @@ function countJacks(cards) {
     order[2] = 'H';
     order[3] = 'D';
     var jacks = 0;
-
     if (cards.length > 0) {
         if (cards[0].charAt(1) === 'C') {
             for (var i = 0; i < cards.length; i++){
@@ -1863,9 +1670,7 @@ function countJacks(cards) {
     }
     return jacks;
 }
-
 function orderByColor(cards, color) {
-
     var clubs = [];
     var spades = [];
     var hearts = [];
@@ -1903,7 +1708,6 @@ function orderByColor(cards, color) {
             break;
     }
 }
-
 function countColorTrumps(cards) {
     var order = [];
     order[0] = 'A';
@@ -1913,7 +1717,6 @@ function countColorTrumps(cards) {
     order[4] = '9';
     order[5] = '8';
     order[6] = '7';
-
     var color = 0;
     if (cards.length > 0) {
         if (cards[0].charAt(0) === 'A') {
@@ -1940,7 +1743,6 @@ function countColorTrumps(cards) {
 }
     return color;
 }
-
 function sortColor(cards) {
     var order = [];
     order[0] = 'A';
@@ -1950,7 +1752,6 @@ function sortColor(cards) {
     order[4] = '9';
     order[5] = '8';
     order[6] = '7';
-
     var clear = [];
     if (cards !== undefined && cards.length > 0){
         for (var j = 0; j < order.length; j++) {
@@ -1963,7 +1764,6 @@ function sortColor(cards) {
     }
     return clear;
 }
-
 function getGameType(declarerpoints, enemypoints, enemycards, matadors) {
     var typeofgame = "";
     var won = true;
@@ -1982,14 +1782,12 @@ function getGameType(declarerpoints, enemypoints, enemycards, matadors) {
         typeofgame = "Przegrana z krawcem";
         won = false;
     }
-
     data = [];
     data[0] = typeofgame;
     data[1] = won;
     data[2] = matadors;
     return data;
 }
-
 function countPoints(cards) {
     var points = 0;
     if (cards.length > 0) {
@@ -2015,7 +1813,6 @@ function countPoints(cards) {
     }
     return points;
 }
-
 function countExtraPoints(extra) {
     switch (extra) {
         case 'schneider':
@@ -2029,7 +1826,6 @@ function countExtraPoints(extra) {
             break;
     }
 }
-
 function countGameValue(declared, matadors) {
     var value = 0;
     if(declared !== null) {
@@ -2053,7 +1849,6 @@ function countGameValue(declared, matadors) {
     }
     return value;
 }
-
 function getGameObj(room) {
     var obj;
     for (var i = 0; i < GameList.length; i++) {
@@ -2062,7 +1857,6 @@ function getGameObj(room) {
     }
     return obj;
 }
-
 function getDeclarationObj(room) {
     var obj;
     for (var i = 0; i < DeclarationList.length; i++) {
@@ -2071,7 +1865,6 @@ function getDeclarationObj(room) {
     }
     return obj;
 }
-
 function getBidObj(room) {
     var obj;
     for (var i = 0; i < BidList.length; i++) {
@@ -2080,7 +1873,6 @@ function getBidObj(room) {
     }
     return obj;
 }
-
 function getRoomObj(room) {
     var obj;
     for (var i = 0; i < RoomList.length; i++) {
@@ -2089,7 +1881,6 @@ function getRoomObj(room) {
     }
     return obj;
 }
-
 function getComputerObj(room) {
     var obj;
     for (var i = 0; i < ComputerList.length; i++) {
@@ -2098,7 +1889,6 @@ function getComputerObj(room) {
     }
     return obj;
 }
-
 function deleteChosenCard(cards, card){
     var newcards = [];
     for(var i=0;i<cards.length;i++){
@@ -2108,7 +1898,6 @@ function deleteChosenCard(cards, card){
     }
    return newcards;
 }
-
 function getComputerHand(incCards, room){
     var cards = [];
     var jacks = [];
@@ -2126,55 +1915,44 @@ function getComputerHand(incCards, room){
     var at = -1;
     var matadors = -1;
     var objComputer = getComputerObj(room);
-
     for(var i=0;i<incCards.length;i++){
         cards.push(incCards[i].substr(incCards[i].indexOf("id")+3,2));
     }
     jacks  = searchJacks(cards);
     jacks = orderJacks(jacks);
     howmanyjacks = countJacksForBid(jacks);
-
     clubs = orderByColor(cards, 'clubs');
     spades = orderByColor(cards, 'spades');
     hearts = orderByColor(cards, 'hearts');
     diamonds = orderByColor(cards, 'diamonds');
-
     var length = [];
     length[0] = clubs.length;
     length[1] = spades.length;
     length[2] = hearts.length;
     length[3] = diamonds.length;
-
     aces = searchPicture(cards, 'A');
     kings = searchPicture(cards, 'K');
     queens = searchPicture(cards, 'Q');
-
     jqk = howmanyjacks+kings+queens;
     atk = aces+kings;
     atk += searchPicture(cards, 'T');
     at = aces+searchPicture(cards, 'T');
-    //null
     if(aces === 0 && kings === 0 && queens === 0 && howmanyjacks <= 1) {
-        //tu deklaracja nulla ouvert
         objComputer.bid = 59;
         objComputer.basic = 'null ouvert';
         objComputer.play = 'declarer';
         objComputer.pickskat= 'no';
-
     }else if(aces === 0 && kings === 0 && queens <= 1){
-        //tu deklaracja nulla
         objComputer.bid = 35;
         objComputer.basic = 'null';
         objComputer.play = 'declarer';
         objComputer.pickskat = 'no';
-
     }else if(aces === 0 && jqk <= 3){
         objComputer.bid = 23;
         objComputer.basic = 'null';
         objComputer.play = 'declarer';
         objComputer.pickskat = 'yes';
     }else if(howmanyjacks >= 2 && atk >=5){
-        //tu deklarujemy gre grand
         matadors = countJacksForBid(jacks);
         objComputer.bid = matadors * 24;
         objComputer.basic = 'grand';
@@ -2361,7 +2139,6 @@ function getComputerHand(incCards, room){
         }
     }
 }
-
 function searchPicture(cards, picture){
     var howmany = 0;
     for(var i=0;i<cards.length;i++){
@@ -2371,17 +2148,14 @@ function searchPicture(cards, picture){
     }
     return howmany;
 }
-
 function getBidPosition(value) {
     for (var i = 0; i < bidvalues.length; i++) {
         if (value === bidvalues[i]) break;
     }
     return i;
 }
-
 function createBidValues() {
     bidvalues = [];
-//Kolor
 for (var type = 9; type <= 12; type++) {
     for (var matador = 1; matador <= 11; matador++) {
         for (var extrapoint = 0; extrapoint <= 6; extrapoint++) {
@@ -2389,8 +2163,6 @@ for (var type = 9; type <= 12; type++) {
         }
     }
 }
-
-//Grand
 for (type = 24; type <= 24; type++) {
     for (var matador = 1; matador <= 4; matador++) {
         for (var extrapoint = 0; extrapoint <= 6; extrapoint++) {
@@ -2398,14 +2170,11 @@ for (type = 24; type <= 24; type++) {
         }
     }
 }
-
-//Null
 bidvalues.push(23);
 bidvalues.push(35);
 bidvalues.push(46);
 bidvalues.push(59);
 }
-
 function sortBidValues() {
     var swapped;
     do {
@@ -2420,8 +2189,6 @@ function sortBidValues() {
         }
     } while (swapped);
 }
-
-
 function removeDuplicates(num) {
     var x,
         len = num.length,
@@ -2436,11 +2203,6 @@ function removeDuplicates(num) {
     }
     return out;
 }
-
-
-// GRA Z KOMPUTEREM
-
-
 function computerDeleteCard(objCards, objComputer, card){
     switch('komputer'){
         case objCards.player1login.trim() :
@@ -2458,7 +2220,6 @@ function computerDeleteCard(objCards, objComputer, card){
     }
     objComputer.cards = deleteChosenCard(objComputer.cards, card);
 }
-
 function computerMove(room) {
     var objGame = getGameObj(room);
     var objCards = getCardsObj(room);
@@ -2466,12 +2227,9 @@ function computerMove(room) {
     var objDeclaration = getDeclarationObj(room);
     var checkWhichIAm = 0;
     var card = '';
-
     if (objComputer.cards.length > 0) {
-        //sprawdzenie który w kolejności wyjeżdzam
         if (objGame.firstturn === null) {
             card = firstMove(room);
-            //Przesyłanie karty, którą wybrał komputer innym graczom oraz usuniecie jej z mozliwych kart
             computerDeleteCard(objCards, objComputer, card);
             app.io.in(room).emit('send card', card, 'komputer');
             app.io.in(room).emit('hide card', card, 'komputer');
@@ -2492,14 +2250,12 @@ function computerMove(room) {
             objGame.turn = getTurn(objGame.turn);
             app.io.in(room).emit('turn', objGame.turn);
         } else {
-            //sprawdzenie pozycji
             if (objCards.firstmiddle !== null) checkWhichIAm++;
             if (objCards.secondmiddle !== null) checkWhichIAm++;
             if (objCards.thirdmiddle !== null) checkWhichIAm++;
             switch (checkWhichIAm) {
                 case 1:
                     card = secondMove(room);
-                    //Przesyłanie karty, którą wybrał komputer innym graczom oraz usuniecie jej z mozliwych kart
                     computerDeleteCard(objCards, objComputer, card);
                     app.io.in(room).emit('send card', card, 'komputer');
                     app.io.in(room).emit('hide card', card, 'komputer');
@@ -2522,7 +2278,6 @@ function computerMove(room) {
                     break;
                 case 2:
                     card = thirdMove(room);
-                    //Przesyłanie karty, którą wybrał komputer innym graczom oraz usuniecie jej z mozliwych kart
                     computerDeleteCard(objCards, objComputer, card);
                     app.io.in(room).emit('send card', card, 'komputer');
                     app.io.in(room).emit('hide card', card, 'komputer');
@@ -2549,7 +2304,6 @@ function computerMove(room) {
                             checkNullTurnEnd(objGame, objCards, room);
                             break;
                     }
-
                     if (objComputer.cards.length === 0) {
                         var people = objGame.zerocards;
                         if (people === null) {
@@ -2569,7 +2323,6 @@ function computerMove(room) {
         }
     }
 }
-
 function checkColorTurnEnd(objGame, objCards, room){
         var cards = [];
         var results = [];
@@ -2579,17 +2332,16 @@ function checkColorTurnEnd(objGame, objCards, room){
         var objBid = getBidObj(room);
         var declaredcolor = [];
         var color = '';
-
-    cards.push(objCards.firstmiddle.substr(objCards.firstmiddle.indexOf("id") + 3, 2));
-    cards.push(objCards.secondmiddle.substr(objCards.secondmiddle.indexOf("id") + 3, 2));
-    cards.push(objCards.thirdmiddle.substr(objCards.thirdmiddle.indexOf("id") + 3, 2));
-
+    if(objCards.firstmiddle !== null && objCards.secondmiddle !== null || objCards.thirdmiddle !== null) {
+        cards.push(objCards.firstmiddle.substr(objCards.firstmiddle.indexOf("id") + 3, 2));
+        cards.push(objCards.secondmiddle.substr(objCards.secondmiddle.indexOf("id") + 3, 2));
+        cards.push(objCards.thirdmiddle.substr(objCards.thirdmiddle.indexOf("id") + 3, 2));
+    }
         var matchColors = [];
         matchColors[0] = 'C';
         matchColors[1] = 'S';
         matchColors[2] = 'H';
         matchColors[3] = 'D';
-
         var figures = [];
         figures[0] = "A";
         figures[1] = "T";
@@ -2598,34 +2350,26 @@ function checkColorTurnEnd(objGame, objCards, room){
         figures[4] = "9";
         figures[5] = "8";
         figures[6] = "7";
-
      switch(objDeclaration.basic.trim()){
          case 'clubs': color = 'C'; break;
          case 'spades': color = 'S'; break;
          case 'hearts': color = 'H'; break;
          case 'diamonds': color = 'D'; break;
      }
-
         for (var i = 0; i < cards.length; i++) {
             if (cards[i].charAt(0) === 'J') jacks.push(cards[i]);
         }
-
         if (jacks.length > 0) {
-            //Układamy walety kolorem
             for (var j = 0; j < matchColors.length; j++) {
                 for (var i = 0; i < jacks.length; i++) {
                     if (jacks[i].charAt(1) === matchColors[j]) results.push(jacks[i]);
                 }
             }
-        } else if (jacks.length === 0) {//Poziom 2
-
-            // sprawdzenie kart pod wzgledem koloru zadeklarowanego
+        } else if (jacks.length === 0) {
             for (var i = 0; i < cards.length; i++) {
                 if (cards[i].charAt(1) === color) declaredcolor.push(cards[i]);
             }
-
             if (declaredcolor.length > 0) {
-                //ustawienie kart pod wzgledem figur
                 for (var j = 0; j < figures.length; j++) {
                     for (var i = 0; i < declaredcolor.length; i++) {
                         if (declaredcolor[i].charAt(0) === figures[j]) {
@@ -2634,19 +2378,15 @@ function checkColorTurnEnd(objGame, objCards, room){
                     }
                 }
             }
-
-            // Poziom 3
             if (declaredcolor.length === 0) {
-                //Pobieramy kolor karty ktora pojawila sie jako 1
                 var color = objGame.firstturn.charAt(1);
                 var CardsSameColor = 0;
-                //Sprawdzamy ile jest kart w tym kolorze
                 for (var i = 0; i < cards.length; i++) {
                     if (cards[i].charAt(1) === color) {
                         CardsSameColor++;
                     }
                 }
-                if (CardsSameColor > 1) { //jezeli wiecej niz 1 to ukladamuy pod wzgledem figur
+                if (CardsSameColor > 1) {
                     for (var i = 0; i < cards.length; i++) {
                         if (cards[i].charAt(1) === color) {
                             results.push(cards[i]);
@@ -2661,13 +2401,11 @@ function checkColorTurnEnd(objGame, objCards, room){
                         }
                     }
                     results = clear;
-                } else {// kazda karta innego koloru
-                    //bierze ten co wyjechał jako 1
+                } else {
                     results[0] = objGame.firstturn;
                 }
             }
         }
-
         var login = '';
         switch (results[0]){
             case  objCards.firstmiddle.substr(objCards.firstmiddle.indexOf("id") + 3, 2) :
@@ -2680,7 +2418,6 @@ function checkColorTurnEnd(objGame, objCards, room){
                 login = objCards.player3login.trim();
                 break;
         }
-
         var players = objGame.players;
         var positions = objGame.positions;
         var temp = -1;
@@ -2690,10 +2427,8 @@ function checkColorTurnEnd(objGame, objCards, room){
                 i = players.length;
             }
         }
-
         var turn = '';
     turn = positions[temp];
-
         if (objBid.bidwinner.trim() !== login.trim()){
             var temp = objGame.oppcards;
             if (temp === null) {
@@ -2747,27 +2482,13 @@ function checkColorTurnEnd(objGame, objCards, room){
 }
 
 function checkGrandTurnEnd(objGame, objCards, room){
-    /*
-     Sprawdzenie kto wygrał odbywa się na kilku poziomach.
-     1. Sprawdzamy czy są walety
-     A. Układamy je według kolejności ten arr[0] wygrywa
-     2. Sprawdzamy czy są karty koloru niezadeklarowanego
-     A. Jeżeli są to układamy je według kolejnośći(kolory, figury) karta arr[0] wygrywa
-     B. Jeżeli każda karta jest innego koloru(niezadeklarowanego) wygrywa karta gracza, który wychodził jako pierwszy do lewy.
-     */
-
-
         var cards = [];
         var results = [];
         var jacks = [];
         var objComputer = getComputerObj(room);
-
-
     cards.push(objCards.firstmiddle.substr(objCards.firstmiddle.indexOf("id") + 3, 2));
     cards.push(objCards.secondmiddle.substr(objCards.secondmiddle.indexOf("id") + 3, 2));
     cards.push(objCards.thirdmiddle.substr(objCards.thirdmiddle.indexOf("id") + 3, 2));
-
-
         var figures = [];
         figures[0] = "A";
         figures[1] = "T";
@@ -2776,37 +2497,29 @@ function checkGrandTurnEnd(objGame, objCards, room){
         figures[4] = "9";
         figures[5] = "8";
         figures[6] = "7";
-
     var matchColors = [];
     matchColors[0] = 'C';
     matchColors[1] = 'S';
     matchColors[2] = 'H';
     matchColors[3] = 'D';
-
-
         for (var i = 0; i < cards.length; i++) {
             if (cards[i].charAt(0) === 'J') jacks.push(cards[i]);
         }
-
         if (jacks.length > 0) {
-            //Układamy walety kolorem
             for (var j = 0; j < matchColors.length; j++) {
                 for (var i = 0; i < jacks.length; i++) {
                     if (jacks[i].charAt(1) === matchColors[j]) results.push(jacks[i]);
                 }
             }
-        } else if (jacks.length === 0) {//Poziom 2
-
-            //Pobieramy kolor karty ktora pojawila sie jako 1
+        } else if (jacks.length === 0) {
             var color = objGame.firstturn.charAt(1);
             var CardsSameColor = 0;
-            //Sprawdzamy ile jest kart w tym kolorze
             for (var i = 0; i < cards.length; i++) {
                 if (cards[i].charAt(1) === color) {
                     CardsSameColor++;
                 }
             }
-            if (CardsSameColor > 1) { //jezeli wiecej niz 1 to ukladamy pod wzgledem figur
+            if (CardsSameColor > 1) { 
                 for (var i = 0; i < cards.length; i++) {
                     if (cards[i].charAt(1) === color) {
                         results.push(cards[i]);
@@ -2821,12 +2534,10 @@ function checkGrandTurnEnd(objGame, objCards, room){
                     }
                 }
                 results = clear;
-            } else {// kazda karta innego koloru
-                //bierze ten co wyjechał jako 1
+            } else {
                 results[0] = objGame.firstturn;
             }
         }
-
     var login = '';
     switch (results[0]){
         case  objCards.firstmiddle.substr(objCards.firstmiddle.indexOf("id") + 3, 2) :
@@ -2849,11 +2560,9 @@ function checkGrandTurnEnd(objGame, objCards, room){
             i = players.length;
         }
     }
-
     var turn = '';
     turn = positions[temp];
    var objBid = getBidObj(room);
-
     if (objBid.bidwinner.trim() !== login.trim()){
         var temp = objGame.oppcards;
         if (temp === null) {
@@ -2889,7 +2598,6 @@ function checkGrandTurnEnd(objGame, objCards, room){
         }
         objGame.deccards = temp;
     }
-
     setTimeout(
         function()
         {
@@ -2906,15 +2614,7 @@ function checkGrandTurnEnd(objGame, objCards, room){
     }
         }, 1000);
 }
-
 function checkNullTurnEnd(objGame, objCards, room){
-    /*
-     Sprawdzenie kto wygrał odbywa się na kilku poziomach.
-     1. Sprawdzamy ile jest kart w kolorze
-     A. Układamy je według kolejności ten arr[0] wygrywa
-     2. Inaczej każda karta jest innego koloru(niezadeklarowanego) wygrywa karta gracza, który wychodził jako pierwszy do lewy.
-     */
-
     var color = objGame.firstturn.charAt(1);
     var CardsSameColor = 0;
     var results = [];
@@ -2922,12 +2622,9 @@ function checkNullTurnEnd(objGame, objCards, room){
     var objBid = getBidObj(room);
     var objDeclaration = getDeclarationObj(room);
     var objComputer = getComputerObj(room);
-
     cards.push(objCards.firstmiddle.substr(objCards.firstmiddle.indexOf("id") + 3, 2));
     cards.push(objCards.secondmiddle.substr(objCards.secondmiddle.indexOf("id") + 3, 2));
     cards.push(objCards.thirdmiddle.substr(objCards.thirdmiddle.indexOf("id") + 3, 2));
-
-
         var figures = [];
         figures[0] = 'A';
         figures[1] = 'K';
@@ -2937,15 +2634,12 @@ function checkNullTurnEnd(objGame, objCards, room){
         figures[5] = '9';
         figures[6] = '8';
         figures[7] = '7';
-
-
-        //Sprawdzamy ile jest kart w tym kolorze
         for (var i = 0; i < cards.length; i++) {
             if (cards[i].charAt(1) === color) {
                 CardsSameColor++;
             }
         }
-        if (CardsSameColor > 1) { //jezeli wiecej niz 1 to ukladamy pod wzgledem figur
+        if (CardsSameColor > 1) { 
             for (var i = 0; i < cards.length; i++) {
                 if (cards[i].charAt(1) === color) {
                     results.push(cards[i]);
@@ -2960,11 +2654,9 @@ function checkNullTurnEnd(objGame, objCards, room){
                 }
             }
             results = clear;
-        } else {// kazda karta innego koloru
-            //bierze ten co wyjechał jako 1
+        } else {
             results[0] = objGame.firstturn;
         }
-
     var login = '';
     switch (results[0]){
         case  objCards.firstmiddle.substr(objCards.firstmiddle.indexOf("id") + 3, 2) :
@@ -2977,7 +2669,6 @@ function checkNullTurnEnd(objGame, objCards, room){
             login = objCards.player3login.trim();
             break;
     }
-
     var players = objGame.players;
     var positions = objGame.positions;
     var temp = -1;
@@ -2987,13 +2678,10 @@ function checkNullTurnEnd(objGame, objCards, room){
             i = players.length;
         }
     }
-
     var turn = '';
     turn = positions[temp];
     if (objBid.bidwinner.trim() === login.trim()) {
-        // 1. Zakńczenie gry null - przegraną dla deklarującego grę.
         var points = 0;
-
         switch(objDeclaration.basic.trim()){
             case 'null':
                 if(objDeclaration.pickskat.trim() === 'yes') points = -46;
@@ -3019,7 +2707,6 @@ function checkNullTurnEnd(objGame, objCards, room){
         objCards.thirdmiddle = null;
         objGame.firstturn = null;
         app.io.in(room).emit('clear table');
-
         objGame.turn = turn;
         if(objComputer !== undefined && objGame.turn.trim() === objComputer.position.trim()){
             computerMove(room);
@@ -3029,20 +2716,15 @@ function checkNullTurnEnd(objGame, objCards, room){
             }, 1000);
         }
 }
-
-
 function thirdMove(room){
     var objDeclaration = getDeclarationObj(room);
     var objComputer = getComputerObj(room);
     var cards = objComputer.cards;
-    //zamiana kart tylko na ich id
     var idcards = [];
     var card = '';
-
     for(var i=0;i<cards.length;i++){
         idcards.push(cards[i].substr(cards[i].indexOf("id")+3,2));
     }
-
     switch(objDeclaration.basic.trim()) {
         case 'clubs' :
             card = getComputerCardColorThirdMove(idcards, 'C',room);
@@ -3066,10 +2748,6 @@ function thirdMove(room){
             card = getComputerCardNullNullOuvertSecondThirdMove(idcards,room);
             break;
     }
-
-
-
-    //zamiana z postaci id -> kartę
     for(var i=0;i<cards.length;i++){
         if(cards[i].substr(cards[i].indexOf("id")+3,2) === card){
             card = cards[i];
@@ -3077,7 +2755,6 @@ function thirdMove(room){
     }
     return card;
 }
-
 function getComputerCardGrandThirdMove(cards, room){
     var objGame = getGameObj(room);
     var card = '';
@@ -3086,16 +2763,12 @@ function getComputerCardGrandThirdMove(cards, room){
     var FriendCard = '';
     var objCard = getCardsObj(room);
     var objBid = getBidObj(room);
-
-
     if (objBid.bidwinner.trim() === 'komputer') {
-        //1 karta na pewno należy do wroga komputer jako solista nie ma przyjaciół
         var arr = [];
         arr[0] = objCard.firstmiddle;
         arr[1] = objCard.secondmiddle;
         arr[2] = objCard.thirdmiddle;
         var secondEnemyCard = '';
-        //firstEnemyCard to objGame.firstturn;
         for(var i=0;i<arr.length;i++){
             if(arr[i]!== null){
                 if(arr[i].substr(arr[i].indexOf("id") + 3, 2) !== objGame.firstturn){
@@ -3104,19 +2777,14 @@ function getComputerCardGrandThirdMove(cards, room){
                 }
             }
         }
-
-        //sprawdzenie cyz pierwsza karta to J
         if (objGame.firstturn.charAt(0) === 'J') {
             var Jacks = searchJacks(cards);
-
             if (Jacks.length > 0) {
                 var myIsHigher = false;
                 myIsHigher = checkIFCanBeatJack(objGame.firstturn.charAt(1), Jacks);
-
                 if (myIsHigher === false) {
                     card = getLowestJack(Jacks);
                 }else{
-                    //moge przebic J 1 wroga teraz sprawdzam cyz moge przebic J 2 wroga
                     if(secondEnemyCard.charAt(0) === 'J'){
                         var myIsHigherAgain = false;
                         myIsHigherAgain = checkIFCanBeatJack(secondEnemyCard.charAt(1), Jacks);
@@ -3200,7 +2868,6 @@ function getComputerCardGrandThirdMove(cards, room){
             }
                 }
         }else {
-        //sprawdzamy która karta nalezy do przyjaciela a która do wroga
         var arr = [];
         arr[0] = objCard.firstmiddle;
         arr[1] = objCard.player1login.trim();
@@ -3208,7 +2875,6 @@ function getComputerCardGrandThirdMove(cards, room){
         arr[3] = objCard.player2login.trim();
         arr[4] = objCard.thirdmiddle;
         arr[5] = objCard.player3login.trim();
-
         for (var i = 0; i < arr.length; i += 2) {
             if (arr[i] !== null) {
                 if (objBid.bidwinner.trim() === arr[i + 1].trim()) {
@@ -3218,40 +2884,24 @@ function getComputerCardGrandThirdMove(cards, room){
                 }
             }
         }
-
         EnemyCard = EnemyCard.substr(EnemyCard.indexOf("id") + 3, 2);
         FriendCard = FriendCard.substr(FriendCard.indexOf("id") + 3, 2);
-
-        //sprawdzamy czy to J
-
         if (objGame.firstturn.charAt(0) === 'J') {
             var Jacks = searchJacks(cards);
-            //sprawdzamy czy mamy J
             if (Jacks.length > 0) {
-                //sprawdzamy do kogo nalezy karta do wroga czy przyjaciela
                 if (IfEnemyCard(room) === true) {
-                    //karta wroga
-                    //sprawdzam czy moge przebic tego J
                     var myIsHigher = false;
                     myIsHigher = checkIFCanBeatJack(EnemyCard, Jacks);
-
                     if (myIsHigher === false) {
-                        // nie mogę przebić tego J
                         card = getLowestJack(Jacks);
                     } else {
                         card = getHighestJack(Jacks);
                     }
                 } else {
-                    //karta nalezy do przyjaciela
-                    // wyjzedzam najwiekszym J
                     card = getLowestJack(Jacks);
                 }
             } else {
-                //nie mam J
-                //sprawdzam do kogo nalezy karta
                 if (IfEnemyCard(room) === true) {
-                    //karta nalezy do wroga
-                    //sprawdzam czy przyjaciel może przebić kartę wroga
                     if (FriendCard.charAt(0) === 'J') {
                            var myFriendIsHigher = false;
                         myFriendIsHigher = checkIfFriendJCanBeatEnemyJ(FriendCard,EnemyCard);
@@ -3261,13 +2911,9 @@ function getComputerCardGrandThirdMove(cards, room){
                             card = getHighestCard(cards);
                         }
                     } else {
-                        //inaczej jedz najmniejszym - przyjaciel jak nie ma J to nie przebije J niczym innym a ty tez nie
                         card = getLowestCard(cards);
                     }
                 } else {
-                    //karta nalezy do przyjaciela
-                    //sprawdzam czy wróg może ją przebić
-
                     if (EnemyCard.charAt(0) === 'J') {
                         var myFriendIsHigher = false;
                         myFriendIsHigher = checkIfFriendJCanBeatEnemyJ(FriendCard,EnemyCard);
@@ -3277,27 +2923,19 @@ function getComputerCardGrandThirdMove(cards, room){
                             card = getHighestCard(cards);
                         }
                     } else {
-                        //inaczej jedz najwieksza
                         card = getHighestCard(cards);
                     }
                 }
             }
         } else {
-            //sprawdz czy masz kartę w kolorze pierwszej karty
-            //sprzawdzamy czy masz kartę kolorze pierwszej karty
             var getColor = false;
             getColor = checkIFGotDecColor(cards, objGame.firstturn.charAt(1));
             if (getColor === true) {
-                //mam karte w kolorze sprawdzam do kogo nalezy ta karta
                 if (IfEnemyCard(room) === true) {
-                    //karta nalezy do wroga
-                    //sprawdzam czy mogę ją przebić
                     var myIsHigher = false;
                     myIsHigher = checkIfMyCardCanBeatEnemy(cards, EnemyCard, EnemyCard.charAt(1));
                     if (myIsHigher === false) {
-                        //sprawdzam czy przyjaciel może przebić kartę wroga
                         if (FriendCard.charAt(0) === 'J') {
-                            //jeżeli przyjaciel wyjechał J a wróg kazdą inną kartą inną niz J przyjaciel wygra
                             card = getHighestColorCard(cards, EnemyCard.charAt(1));
                         } else if (FriendCard.charAt(1) === EnemyCard.charAt(1)) {
                             var friendIsHigher = false;
@@ -3314,8 +2952,6 @@ function getComputerCardGrandThirdMove(cards, room){
                         card = getHighestColorCard(cards, EnemyCard.charAt(1));
                     }
                 } else {
-                    //karta nalezy do przyjaciela
-                    //trzeba sprawdzić czy wróg może przebić kartę przyjaciela
                     if (EnemyCard.charAt(0) === 'J') {
                         card = getLowestColorCard(cards, FriendCard.charAt(1));
                     } else if (EnemyCard.charAt(1) === FriendCard.charAt(1)) {
@@ -3331,15 +2967,11 @@ function getComputerCardGrandThirdMove(cards, room){
                     }
                 }
             } else {
-                //nie mam karty w kolorze
                 if (IfEnemyCard(room) === true) {
-                    //karta nalezy do wroga
-                    //trzeba sprawdzic czy mam J
                     var Jacks = searchJacks(cards);
                     if (Jacks.length > 0) {
                         card = getLowestJack(Jacks);
                     } else {
-                        //trzeba sprawdzic czy przyjaciel przebije kartę wroga
                         if (FriendCard.charAt(0) === 'J') {
                             card = getHighestCard(cards);
                         } else if (EnemyCard.charAt(1) === FriendCard.charAt(1)) {
@@ -3355,12 +2987,9 @@ function getComputerCardGrandThirdMove(cards, room){
                         }
                     }
                 } else {
-                    //karta nalezy do przyjaciela
-                    //trzeba sprawdzic czy wróg może ją przebić
                     if (EnemyCard.charAt(0) === 'J') {
                         var Jacks = searchJacks(cards);
                         if (Jacks.length > 0) {
-                            //sprawdzam czy przebije J wroga
                             var myJIsHigher = false;
                             myJIsHigher = checkIFCanBeatJack(EnemyCard, Jacks);
                             if (myJIsHigher === false) {

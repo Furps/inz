@@ -12,13 +12,11 @@ var gamedeclarationClose = false;
 var askaboutskatClose = false;
 var askeighteenClose = false;
 var showcards = false;
-
 var matchColors = [];
 matchColors[0] = 'C';
 matchColors[1] = 'S';
 matchColors[2] = 'H';
 matchColors[3] = 'D';
-
 
 $(document).ready(function () {
 
@@ -57,7 +55,6 @@ $(document).ready(function () {
         }
         return obj;
     }
-
     function getDeclarationObj(room) {
         var obj;
         for (var i = 0; i < DeclarationList.length; i++) {
@@ -66,7 +63,6 @@ $(document).ready(function () {
         }
         return obj;
     }
-
     function getGameObj(room) {
         var obj;
         for (var i = 0; i < GameList.length; i++) {
@@ -75,7 +71,6 @@ $(document).ready(function () {
         }
         return obj;
     }
-
     function createCardColors(clubs, spades, hearts, diamonds) {
         var colors = [];
         colors[0] = clubs;
@@ -84,14 +79,12 @@ $(document).ready(function () {
         colors[3] = diamonds;
         return colors;
     }
-
     function sortCards(array) {
         var clubs = [];
         var spades = [];
         var hearts = [];
         var diamonds = [];
         var clear = [];
-
         var figures = [];
         figures[0] = "A";
         figures[1] = "T";
@@ -118,9 +111,7 @@ $(document).ready(function () {
                         break;
                 }
             }
-
             var colors = createCardColors(clubs, spades, hearts, diamonds);
-
             //Szukanie waletów
             for (var i = 0; i < colors.length; i++) {
                 for (var j = 0; j < colors[i].length; j++) {
@@ -129,7 +120,6 @@ $(document).ready(function () {
                     }
                 }
             }
-
             //Ustawianie reszty kart
             for (var i = 0; i < colors.length; i++) {
                 for (var z = 0; z < figures.length; z++) {
@@ -143,7 +133,6 @@ $(document).ready(function () {
         }
         return clear;
     }
-
     function getMyCards(){
         var newcards = [];
         var card = '';
@@ -159,7 +148,6 @@ $(document).ready(function () {
         });
         return newcards;
     }
-
     function searchJacks() {
         var exist = false;
         $('.mycards img').each(function () {
@@ -170,7 +158,6 @@ $(document).ready(function () {
         });
         return exist;
     }
-
     function searchDeclaredColor() {
         var exist = false;
         $('.mycards img').each(function () {
@@ -181,7 +168,6 @@ $(document).ready(function () {
         });
         return exist;
     }
-
     function searchTheSameColor(color) {
         var exist = false;
         $('.mycards img').each(function () {
@@ -192,7 +178,6 @@ $(document).ready(function () {
         });
         return exist;
     }
-
     function searchTheSameColorNull(color) {
         var exist = false;
         $('.mycards img').each(function () {
@@ -203,7 +188,6 @@ $(document).ready(function () {
         });
         return exist;
     }
-
     function getDeclaredColor() {
         var obj = getDeclarationObj(room);
         if (obj.declaredgame === "clubs") return 'C';
@@ -211,7 +195,6 @@ $(document).ready(function () {
         if (obj.declaredgame === "hearts")  return 'H';
         if (obj.declaredgame === "diamonds")  return 'D';
     }
-
     function addCard(q) {
         var objGame = getGameObj(room);
         $('.second-card').append(q);
@@ -224,7 +207,6 @@ $(document).ready(function () {
         socket.emit('send card', room, q);
         objGame.canclick = false;
     }
-
     function PlayerMoveReaction(card){
         addCard(card);
         checkIfFirst();
@@ -238,7 +220,6 @@ $(document).ready(function () {
         card = '<img src=' + $(card).attr("src") + ' ' + 'id=' + $(card).attr("id") + '>';
         socket.emit('send card to hide', room, card);
     }
-
     function checkIfFirst(){
         if ($('.first-card').find('img').attr('id') === undefined && $('.third-card').find('img').attr('id') === undefined) {
             socket.emit('first turn card', room, $('.second-card').find('img').attr('id'), $('.mypos').text());
@@ -263,7 +244,6 @@ $(document).ready(function () {
         }
     }
 }
-
     $('input[name=basic]').on('click', function () {
         var objGame = getGameObj(room);
         if ($('input[name=basic]:checked').val() === 'null ouvert' || $('input[name=basic]:checked').val() === 'null') {
@@ -273,7 +253,6 @@ $(document).ready(function () {
             if (objGame.hiddenextrapoints !== true) $('.secondclass').show();
         }
     });
-
     function createBid() {
         var NewBid = {
             room: room,
@@ -283,7 +262,6 @@ $(document).ready(function () {
 
         BidList.push(NewBid);
     }
-
     function createDeclaration() {
         var NewDeclaration = {
             room: room,
@@ -297,7 +275,6 @@ $(document).ready(function () {
 
         DeclarationList.push(NewDeclaration);
     }
-
     function createGame() {
         var NewGame = {
             room: room,
@@ -314,7 +291,6 @@ $(document).ready(function () {
 
         GameList.push(NewGame);
     }
-
     function deleteGame(room) {
         var temp = [];
         for (var i = 0; i < GameList.length; i++) {
@@ -324,7 +300,6 @@ $(document).ready(function () {
         }
         GameList = temp;
     }
-
     function deleteBid(room) {
         var temp = [];
         for (var i = 0; i < BidList.length; i++) {
@@ -334,7 +309,6 @@ $(document).ready(function () {
         }
         BidList = temp;
     }
-
     function deleteDeclaration(room) {
         var temp = [];
         for (var i = 0; i < DeclarationList.length; i++) {
@@ -344,20 +318,17 @@ $(document).ready(function () {
         }
         DeclarationList = temp;
     }
-
     function getHalfCard(card) {
         var partofcard = card.split("/");
         var newcard = '<img src=/images/Cards/Half/' + partofcard[4] + '/' + partofcard[5];
         return newcard;
     }
-
     function getHalfGerCard(card) {
         card = toGermanSuit(card);
         var partofcard = card.split("/");
         var newcard = '<img src=/images/Cards/Half/' + partofcard[4] + '/' + partofcard[5];
         return newcard;
     }
-
     function toGermanSuit(card) {
         var partsofcards = card.split("/");
         var color = '';
@@ -381,7 +352,6 @@ $(document).ready(function () {
         newcard = '<img src=/images/Cards/All/' + color + '/' + id.charAt(3) + 'o' + color.charAt(0) + '.png ' + id;
         return newcard;
     }
-
     function toFrenchSuit(card) {
         var partsofcards = card.split("/");
         var color = '';
@@ -405,7 +375,6 @@ $(document).ready(function () {
         newcard = '<img src=/images/Cards/All/' + color + '/' + id.charAt(3) + 'o' + color.charAt(0) + '.png ' + id;
         return newcard;
     }
-
     function getGermanSuits(cards) {
         var germancards = [];
         for (var i = 0; i < cards.length; i++) {
@@ -413,7 +382,6 @@ $(document).ready(function () {
         }
         return germancards;
     }
-
     function redrawLastCard(pos) {
         if ($(pos).find('img').length > 0) {
             var id = $(pos).find('img:last-child').attr('id');
@@ -423,7 +391,6 @@ $(document).ready(function () {
             $(pos).append(allcard);
         }
     }
-
     function appendBackCards() {
         $('.second-player-cards').empty();
         for (var i = 0; i < 9; i++) {
@@ -436,7 +403,6 @@ $(document).ready(function () {
         }
         $('.first-player-cards').append('<img src=/images/Cards/All/back.png>');
     }
-
     function sendStats(data) {
         $.ajax({
             type: "POST",
@@ -451,7 +417,6 @@ $(document).ready(function () {
             }
         });
     }
-
     function showCards(cards, position) {
         $(position).empty();
         for (var i = 0; i < cards.length - 1; i++) {
@@ -468,7 +433,6 @@ $(document).ready(function () {
         }
 
     }
-
     function hideBackCard(login) {
         switch (login.trim()) {
             case $('.first-player-login').text().trim():
@@ -479,15 +443,10 @@ $(document).ready(function () {
                 break;
         }
     }
-
-    /*** Przygotowanie rozgrywki ***/
     socket.emit('check if can be in room', room);
-
     socket.on('access forbbiden', function () {
         window.open("http://inz.herokuapp.com/users/lobby/","_self");
     });
-
-
     socket.on('prepare game', function () {
         $('.mycards').empty();
         $('.first-player-cards').empty();
@@ -504,15 +463,12 @@ $(document).ready(function () {
         createDeclaration();
         createGame();
     });
-
     socket.on('ask for cards suit', function () {
         socket.emit('send cards suit');
     });
-
     socket.on('set cards suit', function (mySuit) {
         suits = mySuit;
     });
-
     socket.on('pass players order', function (players, positions) {
         if (players[0].toString().trim() === $(".mylogin").text()){
             $(".first-player-login").text(players[1]);
@@ -536,9 +492,6 @@ $(document).ready(function () {
         objGame.players = players;
         objGame.positions = positions;
     });
-
-    /*** Licytacja wartości deklaracji ***/
-
     $("#bid-modal").on('click', '.passbet', function () {
         var objBid = getBidObj(room);
         objBid.bet = "pass";
@@ -546,17 +499,14 @@ $(document).ready(function () {
         $('#bid-modal').modal('hide');
         socket.emit('pass bid', room, $(".mypos").text());
     });
-
     $(".bidvalue").on('click', function () {
         var objBid = getBidObj(room);
         objBid.bet = $(this).text();
         if (objBid.bet !== null) bidmodalClose = true;
         $('#bid-modal').modal('hide');
         socket.emit('bid value', room, objBid.bet);
-        objBid.bet = null;// bez tego użytkownik bedzie mogl zamknac okno bez wskazania wartosci gdy pokaze sie 2 raz. Zapamietana bedzie
-        //ostatnia wartosc a w warunku jest null ;)
+        objBid.bet = null;
     });
-
     $('#bid-modal').on('hidden.bs.modal', function () {
         if(bidmodalClose === false){
             $("#bid-modal").modal('show');
@@ -564,9 +514,6 @@ $(document).ready(function () {
             bidmodalClose = false;
         }
     });
-
-    /*** Licytacja potwierdzenie wartości ***/
-
     $("#confirm-bet").on('click', '.confirmpass', function () {
         var objBid = getBidObj(room);
         objBid.confirmbet = "pass";
@@ -574,16 +521,14 @@ $(document).ready(function () {
         $('#confirm-bet').modal('hide');
         socket.emit('pass bid', room, $(".mypos").text());
     });
-
     $("#confirm-bet").on('click', '.confirmyes', function () {
         var objBid = getBidObj(room);
         objBid.confirmbet = "yes";
         confirmbetClose = true;
         $('#confirm-bet').modal('hide');
-        socket.emit('confirm bid value', room);  //Przodek potwierdzil wartosc np 18 ? tak
+        socket.emit('confirm bid value', room);
         objBid.confirmbet = null;
     });
-
     $('#confirm-bet').on('hidden.bs.modal', function (){
         if(confirmbetClose === false){
             $("#confirm-bet").modal('show');
@@ -591,21 +536,16 @@ $(document).ready(function () {
             confirmbetClose = false;
         }
     });
-
-    /*** Decyzja czy wziac 18 czy 3 passy ***/
-
     $("#ask-eighteen").on('click', '.yeseighteen', function () {
         askeighteenClose = true;
         $('#ask-eighteen').modal('hide');
         socket.emit('ask skat',room);
     });
-
     $("#ask-eighteen").on('click', '.noeighteen', function () {
         askeighteenClose = true;
        $('#ask-eighteen').modal('hide');
        socket.emit('three passes',room);
     });
-
     $('#ask-eighteen').on('hidden.bs.modal', function () {
         if (askeighteenClose === false) {
             $('#ask-eighteen').modal('show');
@@ -613,9 +553,6 @@ $(document).ready(function () {
             askeighteenClose = false;
         }
     });
-
-    /*** Decyzja o wzięciu Skata ***/
-
     $(".pickskatyes").on('click', function () {
         var objDeclaration = getDeclarationObj(room);
         var objGame = getGameObj(room);
@@ -634,14 +571,12 @@ $(document).ready(function () {
         objGame.hiddenextrapoints = true;
         objGame.skatclick = true;
     });
-
     $(".pickskatno").on('click', function () {
         var objDeclaration = getDeclarationObj(room);
         objDeclaration.pickskat = 'no';
         askaboutskatClose = true;
         $('#ask-about-skat').modal('hide');
     });
-
     $('#ask-about-skat').on('hidden.bs.modal', function () {
         if(askaboutskatClose === false){
             $('#ask-about-skat').modal('show');
@@ -653,8 +588,6 @@ $(document).ready(function () {
             askaboutskatClose = false;
         }
     });
-
-    //wskazanie 2 kart do Skata
     $(".mycards").on('click', 'img', function (){
         var objDeclaration = getDeclarationObj(room);
         var objGame = getGameObj(room);
@@ -679,7 +612,6 @@ $(document).ready(function () {
                 }
             }
         }
-
         if (objGame.canclick === true) {
             var objDeclaration = getDeclarationObj(room);
             var objGame = getGameObj(room);
@@ -746,9 +678,6 @@ $(document).ready(function () {
             }
         }
     });
-
-    /*** Deklaracja gry ***/
-
     $("#declaredgame").on('click', function () {
         var objDeclaration = getDeclarationObj(room);
         var objGame = getGameObj(room);
@@ -785,7 +714,6 @@ $(document).ready(function () {
         }
         $('#game-declaration').modal('hide');
     });
-
     $('#game-declaration').on('hidden.bs.modal', function () {
         if(gamedeclarationClose === false) {
             $('#game-declaration').modal('show');
@@ -793,7 +721,6 @@ $(document).ready(function () {
             gamedeclarationClose = false;
         }
     });
-
     socket.on('bid', function (firstValue,secondValue,thirdValue, position) {
         if ($(".mypos").text() === position.trim()) $('#bid-modal').modal('show');
         if (thirdValue <= 264) {
@@ -802,26 +729,20 @@ $(document).ready(function () {
             $(".rd-btn").text(thirdValue);
         }
     });
-
     socket.on('ask bid', function (value, position) {
         if (position.trim() === $('.mypos').text()) {
             $(".askedvalue").text(value + "?");
             $('#confirm-bet').modal('show');
         }
     });
-
     socket.on('ask eighteen', function (winner) {
         if (winner.trim() === $('.mylogin').text()) {
             $('#ask-eighteen').modal('show');
         }
     });
-
-    /*** Gra ***/
-
     socket.on('ask skat', function (login) {
         if ($('.mylogin').text() === login.toString().trim()) $("#ask-about-skat").modal('show');
     });
-
     socket.on('send cards', function (cards) {
         var objDeclaration = getDeclarationObj(room);
         if ($(".mypos").text() === "srodek") {
@@ -837,7 +758,6 @@ $(document).ready(function () {
                 }
             }
         }
-
         if ($(".mypos").text() === "zadek") {
             cards.player1 = sortCards(cards.player1);
             if (suits !== 'german') {
@@ -851,7 +771,6 @@ $(document).ready(function () {
                 }
             }
         }
-
         if ($(".mypos").text() === "przodek") {
             cards.player3 = sortCards(cards.player3);
             if (suits !== 'german') {
@@ -867,7 +786,6 @@ $(document).ready(function () {
         }
         objDeclaration.skatcards = cards.skat;
     });
-
     socket.on('set game data', function (winner, val, basic, extra) {
         $('.bidwinner').text(winner);
         $('.gamevalue').text(val);
@@ -907,7 +825,6 @@ $(document).ready(function () {
         }
         $('.declared').text(basic);
     });
-
     socket.on('turn', function (position) {
         var objGame = getGameObj(room);
         $('.turn').text('kolej: ' + position);
@@ -915,7 +832,6 @@ $(document).ready(function () {
             objGame.canclick = true;
         }
     });
-
     socket.on('send card', function (card, login) {
         if (suits === 'german') {
             card = toGermanSuit(card);
@@ -929,7 +845,6 @@ $(document).ready(function () {
                 break;
         }
     });
-
     socket.on('clear table', function () {
         $('.first-card').empty();
         $('.second-card').empty();
@@ -937,13 +852,11 @@ $(document).ready(function () {
         var objGame = getGameObj(room);
         objGame.first = null;
     });
-
     socket.on('first turn card', function (card, position) {
         var objGame = getGameObj(room);
         objGame.first = card;
         objGame.firstmovepos = position;
     });
-
     socket.on('show cards', function (login, cards) {
         switch (login.trim()) {
             case $('.first-player-login').text().trim() :
@@ -954,7 +867,6 @@ $(document).ready(function () {
                 break;
         }
     });
-
     socket.on('hide card', function (card, login) {
         var objDeclaration = getDeclarationObj(room);
         var objGame = getGameObj(room);
@@ -998,7 +910,6 @@ $(document).ready(function () {
             hideBackCard(login);
         }
     });
-
     socket.on('game result', function (player, bidvalue, result, matadors, declarerpoints, value) {
          var objDeclaration = getDeclarationObj(room);
         if(objDeclaration.declaredgame.trim() === 'null' || objDeclaration.declaredgame.trim() === 'null ouvert'){
@@ -1019,18 +930,14 @@ $(document).ready(function () {
         $('.value').text(value);
         $('#results').modal('show');
     });
-
     socket.on('bid winner', function (login) {
         var objGame = getGameObj(room);
         objGame.bidwinner = login;
     });
-
     socket.on('update status', function (status) {
-        //status czy wygrana gra czy przegrana - ważże przyzapisie punktów do bazy
         var objGame = getGameObj(room);
         objGame.status = status;
     });
-
     socket.on('send stats', function () {
         var objGame = getGameObj(room);
         var objDeclaration = getDeclarationObj(room);
@@ -1042,8 +949,6 @@ $(document).ready(function () {
         };
         sendStats(data);
     });
-
-
     socket.on('three passes', function () {
         var objGame = getGameObj(room);
         var players = objGame.players;
@@ -1052,7 +957,6 @@ $(document).ready(function () {
         $('.t-player').text(players[2]);
         $('#passes').modal('show');
     });
-
     $('#passes').on('hidden.bs.modal', function () {
         if (closePass !== true) {
             $('#passes').modal('show');
@@ -1060,14 +964,12 @@ $(document).ready(function () {
             closePass = false;
         }
     });
-
     $('.leavegame').on('click', function () {
         socket.emit('leave game', room, $('.mylogin').text());
         window.open("http://inz.herokuapp.com/users/lobby", "_self");
         closeResult = true;
         closePass = true;
     });
-
     $('.playanotherone').on('click', function () {
         socket.emit('another one', room, $('.mylogin').text());
         closeResult = true;
@@ -1075,7 +977,6 @@ $(document).ready(function () {
         $('#results').modal('hide');
         $('#passes').modal('hide');
     });
-
     $('#results').on('hidden.bs.modal', function () {
         if (closeResult !== true) {
             $('#results').modal('show');
@@ -1083,37 +984,28 @@ $(document).ready(function () {
             closeResult = false;
         }
     });
-
     socket.on('leave message', function () {
         $('#leave').modal('show');
     });
-
     $('#leave').on('hidden.bs.modal', function () {
         if (closePass !== true) {
             $('#leave').modal('show');
         } else {
             closePass = false;
         }
-
     });
-
-        /* Komputer */
         socket.on('computer pass', function (position){
             socket.emit('pass bid', room, position);
         });
-
     socket.on('computer confirm bid value', function (){
         socket.emit('confirm bid value', room);
     });
-
     socket.on('computer ask skat', function (){
         socket.emit('ask skat', room);
     });
-
     socket.on('computer declared game', function (skatcards, basic, extra, pickskat){
         socket.emit('declared game', room, skatcards, basic, extra, pickskat);
     });
-
     socket.on('update declared game', function (skatcards, basic, extra, pickskat){
         var objDeclaration = getDeclarationObj(room);
         objDeclaration.skatcards = skatcards;
@@ -1121,10 +1013,7 @@ $(document).ready(function () {
         objDeclaration.extra = extra;
         objDeclaration.pickskat = pickskat;
     });
-
     socket.on('computer show declarer cards', function (position, cards){
         socket.emit('show declarer cards', room, position, cards);
     });
-
-
 });

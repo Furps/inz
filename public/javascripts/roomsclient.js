@@ -43,7 +43,6 @@ $(document).ready(function(){
         window.open("http://inz.herokuapp.com/users/game/"+room,"_self");
     });
 
-
     function getRoomObj(room) {
         var obj;
         for (var i = 0; i < RoomList.length; i++) {
@@ -54,5 +53,4 @@ $(document).ready(function(){
         }
         return obj;
     }
-
 });

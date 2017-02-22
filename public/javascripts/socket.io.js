@@ -1,38 +1,13 @@
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.io = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(_dereq_,module,exports){
 
-/**
- * Module dependencies.
- */
-
 var url = _dereq_('./url');
 var parser = _dereq_('socket.io-parser');
 var Manager = _dereq_('./manager');
 var debug = _dereq_('debug')('socket.io-client');
 
-/**
- * Module exports.
- */
-
 module.exports = exports = lookup;
 
-/**
- * Managers cache.
- */
-
 var cache = exports.managers = {};
-
-/**
- * Looks up an existing `Manager` for multiplexing.
- * If the user summons:
- *
- *   `io('http://localhost/a');`
- *   `io('http://localhost/b');`
- *
- * We reuse the existing instance based on same scheme/port/host,
- * and we initialize sockets for each namespace.
- *
- * @api public
- */
 
 function lookup(uri, opts) {
   if (typeof uri == 'object') {
@@ -66,37 +41,12 @@ function lookup(uri, opts) {
   return io.socket(parsed.path);
 }
 
-/**
- * Protocol version.
- *
- * @api public
- */
-
 exports.protocol = parser.protocol;
-
-/**
- * `connect`.
- *
- * @param {String} uri
- * @api public
- */
-
 exports.connect = lookup;
-
-/**
- * Expose constructors for standalone build.
- *
- * @api public
- */
-
 exports.Manager = _dereq_('./manager');
 exports.Socket = _dereq_('./socket');
 
 },{"./manager":2,"./socket":4,"./url":5,"debug":14,"socket.io-parser":40}],2:[function(_dereq_,module,exports){
-
-/**
- * Module dependencies.
- */
 
 var eio = _dereq_('engine.io-client');
 var Socket = _dereq_('./socket');
@@ -107,26 +57,8 @@ var bind = _dereq_('component-bind');
 var debug = _dereq_('debug')('socket.io-client:manager');
 var indexOf = _dereq_('indexof');
 var Backoff = _dereq_('backo2');
-
-/**
- * IE6+ hasOwnProperty
- */
-
 var has = Object.prototype.hasOwnProperty;
-
-/**
- * Module exports
- */
-
 module.exports = Manager;
-
-/**
- * `Manager` constructor.
- *
- * @param {String} engine instance or engine uri/opts
- * @param {Object} options
- * @api public
- */
 
 function Manager(uri, opts){
   if (!(this instanceof Manager)) return new Manager(uri, opts);
@@ -163,12 +95,6 @@ function Manager(uri, opts){
   if (this.autoConnect) this.open();
 }
 
-/**
- * Propagate given event to sockets and emit on `this`
- *
- * @api private
- */
-
 Manager.prototype.emitAll = function() {
   this.emit.apply(this, arguments);
   for (var nsp in this.nsps) {
@@ -178,12 +104,6 @@ Manager.prototype.emitAll = function() {
   }
 };
 
-/**
- * Update `socket.id` of all sockets
- *
- * @api private
- */
-
 Manager.prototype.updateSocketIds = function(){
   for (var nsp in this.nsps) {
     if (has.call(this.nsps, nsp)) {
@@ -192,19 +112,7 @@ Manager.prototype.updateSocketIds = function(){
   }
 };
 
-/**
- * Mix in `Emitter`.
- */
-
 Emitter(Manager.prototype);
-
-/**
- * Sets the `reconnection` config.
- *
- * @param {Boolean} true/false if it should automatically reconnect
- * @return {Manager} self or value
- * @api public
- */
 
 Manager.prototype.reconnection = function(v){
   if (!arguments.length) return this._reconnection;
@@ -212,27 +120,11 @@ Manager.prototype.reconnection = function(v){
   return this;
 };
 
-/**
- * Sets the reconnection attempts config.
- *
- * @param {Number} max reconnection attempts before giving up
- * @return {Manager} self or value
- * @api public
- */
-
 Manager.prototype.reconnectionAttempts = function(v){
   if (!arguments.length) return this._reconnectionAttempts;
   this._reconnectionAttempts = v;
   return this;
 };
-
-/**
- * Sets the delay between reconnections.
- *
- * @param {Number} delay
- * @return {Manager} self or value
- * @api public
- */
 
 Manager.prototype.reconnectionDelay = function(v){
   if (!arguments.length) return this._reconnectionDelay;
@@ -248,14 +140,6 @@ Manager.prototype.randomizationFactor = function(v){
   return this;
 };
 
-/**
- * Sets the maximum delay between reconnections.
- *
- * @param {Number} delay
- * @return {Manager} self or value
- * @api public
- */
-
 Manager.prototype.reconnectionDelayMax = function(v){
   if (!arguments.length) return this._reconnectionDelayMax;
   this._reconnectionDelayMax = v;
@@ -263,25 +147,11 @@ Manager.prototype.reconnectionDelayMax = function(v){
   return this;
 };
 
-/**
- * Sets the connection timeout. `false` to disable
- *
- * @return {Manager} self or value
- * @api public
- */
-
 Manager.prototype.timeout = function(v){
   if (!arguments.length) return this._timeout;
   this._timeout = v;
   return this;
 };
-
-/**
- * Starts trying to reconnect if reconnection is enabled and we have not
- * started reconnecting yet
- *
- * @api private
- */
 
 Manager.prototype.maybeReconnectOnOpen = function() {
   // Only try to reconnect if it's the first time we're connecting
@@ -290,15 +160,6 @@ Manager.prototype.maybeReconnectOnOpen = function() {
     this.reconnect();
   }
 };
-
-
-/**
- * Sets the current transport `socket`.
- *
- * @param {Function} optional, callback
- * @return {Manager} self
- * @api public
- */
 
 Manager.prototype.open =
 Manager.prototype.connect = function(fn){
@@ -312,13 +173,11 @@ Manager.prototype.connect = function(fn){
   this.readyState = 'opening';
   this.skipReconnect = false;
 
-  // emit `open`
   var openSub = on(socket, 'open', function() {
     self.onopen();
     fn && fn();
   });
 
-  // emit `connect_error`
   var errorSub = on(socket, 'error', function(data){
     debug('connect_error');
     self.cleanup();
@@ -329,17 +188,14 @@ Manager.prototype.connect = function(fn){
       err.data = data;
       fn(err);
     } else {
-      // Only do this if there is no fn to handle the error
       self.maybeReconnectOnOpen();
     }
   });
 
-  // emit `connect_timeout`
   if (false !== this._timeout) {
     var timeout = this._timeout;
     debug('connect attempt will timeout after %d', timeout);
 
-    // set timer
     var timer = setTimeout(function(){
       debug('connect attempt timed out after %d', timeout);
       openSub.destroy();
@@ -361,23 +217,12 @@ Manager.prototype.connect = function(fn){
   return this;
 };
 
-/**
- * Called upon transport open.
- *
- * @api private
- */
-
 Manager.prototype.onopen = function(){
   debug('open');
-
-  // clear old subs
   this.cleanup();
-
-  // mark as open
   this.readyState = 'open';
   this.emit('open');
 
-  // add new subs
   var socket = this.engine;
   this.subs.push(on(socket, 'data', bind(this, 'ondata')));
   this.subs.push(on(socket, 'ping', bind(this, 'onping')));
@@ -387,64 +232,27 @@ Manager.prototype.onopen = function(){
   this.subs.push(on(this.decoder, 'decoded', bind(this, 'ondecoded')));
 };
 
-/**
- * Called upon a ping.
- *
- * @api private
- */
-
 Manager.prototype.onping = function(){
   this.lastPing = new Date;
   this.emitAll('ping');
 };
 
-/**
- * Called upon a packet.
- *
- * @api private
- */
-
 Manager.prototype.onpong = function(){
   this.emitAll('pong', new Date - this.lastPing);
 };
-
-/**
- * Called with data.
- *
- * @api private
- */
 
 Manager.prototype.ondata = function(data){
   this.decoder.add(data);
 };
 
-/**
- * Called when parser fully decodes a packet.
- *
- * @api private
- */
-
 Manager.prototype.ondecoded = function(packet) {
   this.emit('packet', packet);
 };
-
-/**
- * Called upon socket error.
- *
- * @api private
- */
 
 Manager.prototype.onerror = function(err){
   debug('error', err);
   this.emitAll('error', err);
 };
-
-/**
- * Creates a new socket for the given `nsp`.
- *
- * @return {Socket}
- * @api public
- */
 
 Manager.prototype.socket = function(nsp){
   var socket = this.nsps[nsp];
@@ -458,7 +266,6 @@ Manager.prototype.socket = function(nsp){
     });
 
     if (this.autoConnect) {
-      // manually call here since connecting evnet is fired before listening
       onConnecting();
     }
   }
@@ -472,12 +279,6 @@ Manager.prototype.socket = function(nsp){
   return socket;
 };
 
-/**
- * Called upon a socket close.
- *
- * @param {Socket} socket
- */
-
 Manager.prototype.destroy = function(socket){
   var index = indexOf(this.connecting, socket);
   if (~index) this.connecting.splice(index, 1);
@@ -486,19 +287,11 @@ Manager.prototype.destroy = function(socket){
   this.close();
 };
 
-/**
- * Writes a packet.
- *
- * @param {Object} packet
- * @api private
- */
-
 Manager.prototype.packet = function(packet){
   debug('writing packet %j', packet);
   var self = this;
 
   if (!self.encoding) {
-    // encode, then write to engine with result
     self.encoding = true;
     this.encoder.encode(packet, function(encodedPackets) {
       for (var i = 0; i < encodedPackets.length; i++) {
@@ -507,17 +300,10 @@ Manager.prototype.packet = function(packet){
       self.encoding = false;
       self.processPacketQueue();
     });
-  } else { // add packet to the queue
+  } else { 
     self.packetBuffer.push(packet);
   }
 };
-
-/**
- * If packet buffer is non-empty, begins encoding the
- * next packet in line.
- *
- * @api private
- */
 
 Manager.prototype.processPacketQueue = function() {
   if (this.packetBuffer.length > 0 && !this.encoding) {
@@ -525,12 +311,6 @@ Manager.prototype.processPacketQueue = function() {
     this.packet(pack);
   }
 };
-
-/**
- * Clean up transport subscriptions and packet buffer.
- *
- * @api private
- */
 
 Manager.prototype.cleanup = function(){
   debug('cleanup');
@@ -545,32 +325,18 @@ Manager.prototype.cleanup = function(){
   this.decoder.destroy();
 };
 
-/**
- * Close the current socket.
- *
- * @api private
- */
-
 Manager.prototype.close =
 Manager.prototype.disconnect = function(){
   debug('disconnect');
   this.skipReconnect = true;
   this.reconnecting = false;
   if ('opening' == this.readyState) {
-    // `onclose` will not fire because
-    // an open event never happened
     this.cleanup();
   }
   this.backoff.reset();
   this.readyState = 'closed';
   if (this.engine) this.engine.close();
 };
-
-/**
- * Called upon engine close.
- *
- * @api private
- */
 
 Manager.prototype.onclose = function(reason){
   debug('onclose');
@@ -584,12 +350,6 @@ Manager.prototype.onclose = function(reason){
     this.reconnect();
   }
 };
-
-/**
- * Attempt a reconnection.
- *
- * @api private
- */
 
 Manager.prototype.reconnect = function(){
   if (this.reconnecting || this.skipReconnect) return this;
@@ -637,12 +397,6 @@ Manager.prototype.reconnect = function(){
   }
 };
 
-/**
- * Called upon successful reconnect.
- *
- * @api private
- */
-
 Manager.prototype.onreconnect = function(){
   var attempt = this.backoff.attempts;
   this.reconnecting = false;
@@ -653,20 +407,7 @@ Manager.prototype.onreconnect = function(){
 
 },{"./on":3,"./socket":4,"backo2":8,"component-bind":11,"component-emitter":12,"debug":14,"engine.io-client":16,"indexof":32,"socket.io-parser":40}],3:[function(_dereq_,module,exports){
 
-/**
- * Module exports.
- */
-
 module.exports = on;
-
-/**
- * Helper for subscriptions.
- *
- * @param {Object|EventEmitter} obj with `Emitter` mixin or `EventEmitter`
- * @param {String} event name
- * @param {Function} callback
- * @api public
- */
 
 function on(obj, ev, fn) {
   obj.on(ev, fn);
@@ -679,10 +420,6 @@ function on(obj, ev, fn) {
 
 },{}],4:[function(_dereq_,module,exports){
 
-/**
- * Module dependencies.
- */
-
 var parser = _dereq_('socket.io-parser');
 var Emitter = _dereq_('component-emitter');
 var toArray = _dereq_('to-array');
@@ -691,18 +428,7 @@ var bind = _dereq_('component-bind');
 var debug = _dereq_('debug')('socket.io-client:socket');
 var hasBin = _dereq_('has-binary');
 
-/**
- * Module exports.
- */
-
 module.exports = exports = Socket;
-
-/**
- * Internal events (blacklisted).
- * These events can't be emitted by the user.
- *
- * @api private
- */
 
 var events = {
   connect: 1,
@@ -720,17 +446,7 @@ var events = {
   pong: 1
 };
 
-/**
- * Shortcut to `Emitter#emit`.
- */
-
 var emit = Emitter.prototype.emit;
-
-/**
- * `Socket` constructor.
- *
- * @api public
- */
 
 function Socket(io, nsp){
   this.io = io;
@@ -745,17 +461,7 @@ function Socket(io, nsp){
   if (this.io.autoConnect) this.open();
 }
 
-/**
- * Mix in `Emitter`.
- */
-
 Emitter(Socket.prototype);
-
-/**
- * Subscribe to open, close and packet events
- *
- * @api private
- */
 
 Socket.prototype.subEvents = function() {
   if (this.subs) return;
@@ -768,12 +474,6 @@ Socket.prototype.subEvents = function() {
   ];
 };
 
-/**
- * "Opens" the socket.
- *
- * @api public
- */
-
 Socket.prototype.open =
 Socket.prototype.connect = function(){
   if (this.connected) return this;
@@ -785,28 +485,12 @@ Socket.prototype.connect = function(){
   return this;
 };
 
-/**
- * Sends a `message` event.
- *
- * @return {Socket} self
- * @api public
- */
-
 Socket.prototype.send = function(){
   var args = toArray(arguments);
   args.unshift('message');
   this.emit.apply(this, args);
   return this;
 };
-
-/**
- * Override `emit`.
- * If the event is in `events`, it's emitted normally.
- *
- * @param {String} event name
- * @return {Socket} self
- * @api public
- */
 
 Socket.prototype.emit = function(ev){
   if (events.hasOwnProperty(ev)) {
@@ -815,14 +499,13 @@ Socket.prototype.emit = function(ev){
   }
 
   var args = toArray(arguments);
-  var parserType = parser.EVENT; // default
-  if (hasBin(args)) { parserType = parser.BINARY_EVENT; } // binary
+  var parserType = parser.EVENT; 
+  if (hasBin(args)) { parserType = parser.BINARY_EVENT; }
   var packet = { type: parserType, data: args };
 
   packet.options = {};
   packet.options.compress = !this.flags || false !== this.flags.compress;
 
-  // event ack callback
   if ('function' == typeof args[args.length - 1]) {
     debug('emitting packet with ack id %d', this.ids);
     this.acks[this.ids] = args.pop();
@@ -840,39 +523,18 @@ Socket.prototype.emit = function(ev){
   return this;
 };
 
-/**
- * Sends a packet.
- *
- * @param {Object} packet
- * @api private
- */
-
 Socket.prototype.packet = function(packet){
   packet.nsp = this.nsp;
   this.io.packet(packet);
 };
 
-/**
- * Called upon engine `open`.
- *
- * @api private
- */
-
 Socket.prototype.onopen = function(){
   debug('transport is open - connecting');
 
-  // write connect packet if necessary
   if ('/' != this.nsp) {
     this.packet({ type: parser.CONNECT });
   }
 };
-
-/**
- * Called upon engine `close`.
- *
- * @param {String} reason
- * @api private
- */
 
 Socket.prototype.onclose = function(reason){
   debug('close (%s)', reason);
@@ -881,13 +543,6 @@ Socket.prototype.onclose = function(reason){
   delete this.id;
   this.emit('disconnect', reason);
 };
-
-/**
- * Called with socket packet.
- *
- * @param {Object} packet
- * @api private
- */
 
 Socket.prototype.onpacket = function(packet){
   if (packet.nsp != this.nsp) return;
@@ -923,13 +578,6 @@ Socket.prototype.onpacket = function(packet){
   }
 };
 
-/**
- * Called upon a server event.
- *
- * @param {Object} packet
- * @api private
- */
-
 Socket.prototype.onevent = function(packet){
   var args = packet.data || [];
   debug('emitting event %j', args);
@@ -945,12 +593,6 @@ Socket.prototype.onevent = function(packet){
     this.receiveBuffer.push(args);
   }
 };
-
-/**
- * Produces an ack callback to emit with an event.
- *
- * @api private
- */
 
 Socket.prototype.ack = function(id){
   var self = this;
@@ -971,13 +613,6 @@ Socket.prototype.ack = function(id){
   };
 };
 
-/**
- * Called upon a server acknowlegement.
- *
- * @param {Object} packet
- * @api private
- */
-
 Socket.prototype.onack = function(packet){
   var ack = this.acks[packet.id];
   if ('function' == typeof ack) {
@@ -989,24 +624,12 @@ Socket.prototype.onack = function(packet){
   }
 };
 
-/**
- * Called upon server connect.
- *
- * @api private
- */
-
 Socket.prototype.onconnect = function(){
   this.connected = true;
   this.disconnected = false;
   this.emit('connect');
   this.emitBuffered();
 };
-
-/**
- * Emit buffered events (received and emitted).
- *
- * @api private
- */
 
 Socket.prototype.emitBuffered = function(){
   var i;
@@ -1021,29 +644,14 @@ Socket.prototype.emitBuffered = function(){
   this.sendBuffer = [];
 };
 
-/**
- * Called upon server disconnect.
- *
- * @api private
- */
-
 Socket.prototype.ondisconnect = function(){
   debug('server disconnect (%s)', this.nsp);
   this.destroy();
   this.onclose('io server disconnect');
 };
 
-/**
- * Called upon forced client/server side disconnections,
- * this method ensures the manager stops tracking us and
- * that reconnections don't get triggered for this.
- *
- * @api private.
- */
-
 Socket.prototype.destroy = function(){
   if (this.subs) {
-    // clean subscriptions to avoid reconnections
     for (var i = 0; i < this.subs.length; i++) {
       this.subs[i].destroy();
     }
@@ -1053,13 +661,6 @@ Socket.prototype.destroy = function(){
   this.io.destroy(this);
 };
 
-/**
- * Disconnects the socket manually.
- *
- * @return {Socket} self
- * @api public
- */
-
 Socket.prototype.close =
 Socket.prototype.disconnect = function(){
   if (this.connected) {
@@ -1067,23 +668,13 @@ Socket.prototype.disconnect = function(){
     this.packet({ type: parser.DISCONNECT });
   }
 
-  // remove socket from pool
   this.destroy();
 
   if (this.connected) {
-    // fire events
     this.onclose('io client disconnect');
   }
   return this;
 };
-
-/**
- * Sets the compress flag.
- *
- * @param {Boolean} if `true`, compresses the sending data
- * @return {Socket} self
- * @api public
- */
 
 Socket.prototype.compress = function(compress){
   this.flags = this.flags || {};
@@ -1094,36 +685,17 @@ Socket.prototype.compress = function(compress){
 },{"./on":3,"component-bind":11,"component-emitter":12,"debug":14,"has-binary":30,"socket.io-parser":40,"to-array":43}],5:[function(_dereq_,module,exports){
 (function (global){
 
-/**
- * Module dependencies.
- */
-
 var parseuri = _dereq_('parseuri');
 var debug = _dereq_('debug')('socket.io-client:url');
 
-/**
- * Module exports.
- */
-
 module.exports = url;
-
-/**
- * URL parser.
- *
- * @param {String} url
- * @param {Object} An object meant to mimic window.location.
- *                 Defaults to window.location.
- * @api public
- */
 
 function url(uri, loc){
   var obj = uri;
 
-  // default to window.location
   var loc = loc || global.location;
   if (null == uri) uri = loc.protocol + '//' + loc.host;
 
-  // relative path support
   if ('string' == typeof uri) {
     if ('/' == uri.charAt(0)) {
       if ('/' == uri.charAt(1)) {
@@ -1142,12 +714,10 @@ function url(uri, loc){
       }
     }
 
-    // parse
     debug('parse %s', uri);
     obj = parseuri(uri);
   }
 
-  // make sure we treat `localhost:80` and `localhost` equally
   if (!obj.port) {
     if (/^(http|ws)$/.test(obj.protocol)) {
       obj.port = '80';
@@ -1162,9 +732,7 @@ function url(uri, loc){
   var ipv6 = obj.host.indexOf(':') !== -1;
   var host = ipv6 ? '[' + obj.host + ']' : obj.host;
 
-  // define unique id
   obj.id = obj.protocol + '://' + host + ':' + obj.port;
-  // define href
   obj.href = obj.protocol + '://' + host + (loc && loc.port == obj.port ? '' : (':' + obj.port));
 
   return obj;
@@ -1187,11 +755,9 @@ function after(count, callback, err_cb) {
         }
         --proxy.count
 
-        // after first error, rest are passed to err_cb
         if (err) {
             bail = true
             callback(err)
-            // future error callbacks will go to error handler
             callback = err_cb
         } else if (proxy.count === 0 && !bail) {
             callback(null, result)
@@ -1202,12 +768,6 @@ function after(count, callback, err_cb) {
 function noop() {}
 
 },{}],7:[function(_dereq_,module,exports){
-/**
- * An abstraction for slicing an arraybuffer even when
- * ArrayBuffer.prototype.slice is not supported
- *
- * @api public
- */
 
 module.exports = function(arraybuffer, start, end) {
   var bytes = arraybuffer.byteLength;
@@ -1234,23 +794,7 @@ module.exports = function(arraybuffer, start, end) {
 
 },{}],8:[function(_dereq_,module,exports){
 
-/**
- * Expose `Backoff`.
- */
-
 module.exports = Backoff;
-
-/**
- * Initialize backoff timer with `opts`.
- *
- * - `min` initial timeout in milliseconds [100]
- * - `max` max timeout [10000]
- * - `jitter` [0]
- * - `factor` [2]
- *
- * @param {Object} opts
- * @api public
- */
 
 function Backoff(opts) {
   opts = opts || {};
@@ -1260,13 +804,6 @@ function Backoff(opts) {
   this.jitter = opts.jitter > 0 && opts.jitter <= 1 ? opts.jitter : 0;
   this.attempts = 0;
 }
-
-/**
- * Return the backoff duration.
- *
- * @return {Number}
- * @api public
- */
 
 Backoff.prototype.duration = function(){
   var ms = this.ms * Math.pow(this.factor, this.attempts++);
@@ -1278,41 +815,17 @@ Backoff.prototype.duration = function(){
   return Math.min(ms, this.max) | 0;
 };
 
-/**
- * Reset the number of attempts.
- *
- * @api public
- */
-
 Backoff.prototype.reset = function(){
   this.attempts = 0;
 };
-
-/**
- * Set the minimum duration
- *
- * @api public
- */
 
 Backoff.prototype.setMin = function(min){
   this.ms = min;
 };
 
-/**
- * Set the maximum duration
- *
- * @api public
- */
-
 Backoff.prototype.setMax = function(max){
   this.max = max;
 };
-
-/**
- * Set the jitter
- *
- * @api public
- */
 
 Backoff.prototype.setJitter = function(jitter){
   this.jitter = jitter;
@@ -1320,19 +833,12 @@ Backoff.prototype.setJitter = function(jitter){
 
 
 },{}],9:[function(_dereq_,module,exports){
-/*
- * base64-arraybuffer
- * https://github.com/niklasvh/base64-arraybuffer
- *
- * Copyright (c) 2012 Niklas von Hertzen
- * Licensed under the MIT license.
- */
+
 (function(){
   "use strict";
 
   var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
-  // Use a lookup table to find the index.
   var lookup = new Uint8Array(256);
   for (var i = 0; i < chars.length; i++) {
     lookup[chars.charCodeAt(i)] = i;
@@ -1390,18 +896,11 @@ Backoff.prototype.setJitter = function(jitter){
 
 },{}],10:[function(_dereq_,module,exports){
 (function (global){
-/**
- * Create a blob builder even when vendor prefixes exist
- */
 
 var BlobBuilder = global.BlobBuilder
   || global.WebKitBlobBuilder
   || global.MSBlobBuilder
   || global.MozBlobBuilder;
-
-/**
- * Check if Blob constructor is supported
- */
 
 var blobSupported = (function() {
   try {
@@ -1412,11 +911,6 @@ var blobSupported = (function() {
   }
 })();
 
-/**
- * Check if Blob constructor supports ArrayBufferViews
- * Fails in Safari 6, so we need to map to ArrayBuffers there.
- */
-
 var blobSupportsArrayBufferView = blobSupported && (function() {
   try {
     var b = new Blob([new Uint8Array([1,2])]);
@@ -1426,19 +920,9 @@ var blobSupportsArrayBufferView = blobSupported && (function() {
   }
 })();
 
-/**
- * Check if BlobBuilder is supported
- */
-
 var blobBuilderSupported = BlobBuilder
   && BlobBuilder.prototype.append
   && BlobBuilder.prototype.getBlob;
-
-/**
- * Helper function that maps ArrayBufferViews to ArrayBuffers
- * Used by BlobBuilder constructor and old browsers that didn't
- * support it in the Blob constructor.
- */
 
 function mapArrayBufferViews(ary) {
   for (var i = 0; i < ary.length; i++) {
@@ -1446,8 +930,6 @@ function mapArrayBufferViews(ary) {
     if (chunk.buffer instanceof ArrayBuffer) {
       var buf = chunk.buffer;
 
-      // if this is a subarray, make a copy so we only
-      // include the subarray region from the underlying buffer
       if (chunk.byteLength !== buf.byteLength) {
         var copy = new Uint8Array(chunk.byteLength);
         copy.set(new Uint8Array(buf, chunk.byteOffset, chunk.byteLength));
@@ -1489,20 +971,8 @@ module.exports = (function() {
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : {})
 },{}],11:[function(_dereq_,module,exports){
-/**
- * Slice reference.
- */
 
 var slice = [].slice;
-
-/**
- * Bind `obj` to `fn`.
- *
- * @param {Object} obj
- * @param {Function|String} fn or string
- * @return {Function}
- * @api public
- */
 
 module.exports = function(obj, fn){
   if ('string' == typeof fn) fn = obj[fn];
@@ -1515,29 +985,11 @@ module.exports = function(obj, fn){
 
 },{}],12:[function(_dereq_,module,exports){
 
-/**
- * Expose `Emitter`.
- */
-
 module.exports = Emitter;
-
-/**
- * Initialize a new `Emitter`.
- *
- * @api public
- */
 
 function Emitter(obj) {
   if (obj) return mixin(obj);
 };
-
-/**
- * Mixin the emitter properties.
- *
- * @param {Object} obj
- * @return {Object}
- * @api private
- */
 
 function mixin(obj) {
   for (var key in Emitter.prototype) {
@@ -1546,15 +998,6 @@ function mixin(obj) {
   return obj;
 }
 
-/**
- * Listen on the given `event` with `fn`.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
 Emitter.prototype.on =
 Emitter.prototype.addEventListener = function(event, fn){
   this._callbacks = this._callbacks || {};
@@ -1562,16 +1005,6 @@ Emitter.prototype.addEventListener = function(event, fn){
     .push(fn);
   return this;
 };
-
-/**
- * Adds an `event` listener that will be invoked a single
- * time then automatically removed.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
 
 Emitter.prototype.once = function(event, fn){
   function on() {
@@ -1584,39 +1017,25 @@ Emitter.prototype.once = function(event, fn){
   return this;
 };
 
-/**
- * Remove the given callback for `event` or all
- * registered callbacks.
- *
- * @param {String} event
- * @param {Function} fn
- * @return {Emitter}
- * @api public
- */
-
 Emitter.prototype.off =
 Emitter.prototype.removeListener =
 Emitter.prototype.removeAllListeners =
 Emitter.prototype.removeEventListener = function(event, fn){
   this._callbacks = this._callbacks || {};
 
-  // all
   if (0 == arguments.length) {
     this._callbacks = {};
     return this;
   }
 
-  // specific event
   var callbacks = this._callbacks['$' + event];
   if (!callbacks) return this;
 
-  // remove all handlers
   if (1 == arguments.length) {
     delete this._callbacks['$' + event];
     return this;
   }
 
-  // remove specific handler
   var cb;
   for (var i = 0; i < callbacks.length; i++) {
     cb = callbacks[i];
@@ -1627,14 +1046,6 @@ Emitter.prototype.removeEventListener = function(event, fn){
   }
   return this;
 };
-
-/**
- * Emit `event` with the given args.
- *
- * @param {String} event
- * @param {Mixed} ...
- * @return {Emitter}
- */
 
 Emitter.prototype.emit = function(event){
   this._callbacks = this._callbacks || {};
@@ -1651,26 +1062,10 @@ Emitter.prototype.emit = function(event){
   return this;
 };
 
-/**
- * Return array of callbacks for `event`.
- *
- * @param {String} event
- * @return {Array}
- * @api public
- */
-
 Emitter.prototype.listeners = function(event){
   this._callbacks = this._callbacks || {};
   return this._callbacks['$' + event] || [];
 };
-
-/**
- * Check if this emitter has `event` handlers.
- *
- * @param {String} event
- * @return {Boolean}
- * @api public
- */
 
 Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
@@ -1686,12 +1081,6 @@ module.exports = function(a, b){
 };
 },{}],14:[function(_dereq_,module,exports){
 
-/**
- * This is the web browser implementation of `debug()`.
- *
- * Expose `debug()` as the module.
- */
-
 exports = module.exports = _dereq_('./debug');
 exports.log = log;
 exports.formatArgs = formatArgs;
@@ -1703,9 +1092,6 @@ exports.storage = 'undefined' != typeof chrome
                   ? chrome.storage.local
                   : localstorage();
 
-/**
- * Colors.
- */
 
 exports.colors = [
   'lightseagreen',
@@ -1716,38 +1102,15 @@ exports.colors = [
   'crimson'
 ];
 
-/**
- * Currently only WebKit-based Web Inspectors, Firefox >= v31,
- * and the Firebug extension (any Firefox version) are known
- * to support "%c" CSS customizations.
- *
- * TODO: add a `localStorage` variable to explicitly enable/disable colors
- */
-
 function useColors() {
-  // is webkit? http://stackoverflow.com/a/16459606/376773
   return ('WebkitAppearance' in document.documentElement.style) ||
-    // is firebug? http://stackoverflow.com/a/398120/376773
     (window.console && (console.firebug || (console.exception && console.table))) ||
-    // is firefox >= v31?
-    // https://developer.mozilla.org/en-US/docs/Tools/Web_Console#Styling_messages
     (navigator.userAgent.toLowerCase().match(/firefox\/(\d+)/) && parseInt(RegExp.$1, 10) >= 31);
 }
-
-/**
- * Map %j to `JSON.stringify()`, since no Web Inspectors do that by default.
- */
 
 exports.formatters.j = function(v) {
   return JSON.stringify(v);
 };
-
-
-/**
- * Colorize log arguments if enabled.
- *
- * @api public
- */
 
 function formatArgs() {
   var args = arguments;
@@ -1765,17 +1128,12 @@ function formatArgs() {
   var c = 'color: ' + this.color;
   args = [args[0], c, 'color: inherit'].concat(Array.prototype.slice.call(args, 1));
 
-  // the final "%c" is somewhat tricky, because there could be other
-  // arguments passed either before or after the %c, so we need to
-  // figure out the correct index to insert the CSS into
   var index = 0;
   var lastC = 0;
   args[0].replace(/%[a-z%]/g, function(match) {
     if ('%%' === match) return;
     index++;
     if ('%c' === match) {
-      // we only are interested in the *last* %c
-      // (the user may have provided their own)
       lastC = index;
     }
   });
@@ -1784,27 +1142,11 @@ function formatArgs() {
   return args;
 }
 
-/**
- * Invokes `console.log()` when available.
- * No-op when `console.log` is not a "function".
- *
- * @api public
- */
-
 function log() {
-  // this hackery is required for IE8/9, where
-  // the `console.log` function doesn't have 'apply'
   return 'object' === typeof console
     && console.log
     && Function.prototype.apply.call(console.log, console, arguments);
 }
-
-/**
- * Save `namespaces`.
- *
- * @param {String} namespaces
- * @api private
- */
 
 function save(namespaces) {
   try {
@@ -1816,13 +1158,6 @@ function save(namespaces) {
   } catch(e) {}
 }
 
-/**
- * Load `namespaces`.
- *
- * @return {String} returns the previously persisted debug modes
- * @api private
- */
-
 function load() {
   var r;
   try {
@@ -1831,22 +1166,7 @@ function load() {
   return r;
 }
 
-/**
- * Enable namespaces listed in `localStorage.debug` initially.
- */
-
 exports.enable(load());
-
-/**
- * Localstorage attempts to return the localstorage.
- *
- * This is necessary because safari throws
- * when a user disables cookies/localstorage
- * and you attempt to access it.
- *
- * @return {LocalStorage}
- * @api private
- */
 
 function localstorage(){
   try {
@@ -1856,79 +1176,31 @@ function localstorage(){
 
 },{"./debug":15}],15:[function(_dereq_,module,exports){
 
-/**
- * This is the common logic for both the Node.js and web browser
- * implementations of `debug()`.
- *
- * Expose `debug()` as the module.
- */
-
 exports = module.exports = debug;
 exports.coerce = coerce;
 exports.disable = disable;
 exports.enable = enable;
 exports.enabled = enabled;
 exports.humanize = _dereq_('ms');
-
-/**
- * The currently active debug mode names, and names to skip.
- */
-
 exports.names = [];
 exports.skips = [];
-
-/**
- * Map of special "%n" handling functions, for the debug "format" argument.
- *
- * Valid key names are a single, lowercased letter, i.e. "n".
- */
-
 exports.formatters = {};
-
-/**
- * Previously assigned color.
- */
-
 var prevColor = 0;
-
-/**
- * Previous log timestamp.
- */
-
 var prevTime;
-
-/**
- * Select a color.
- *
- * @return {Number}
- * @api private
- */
 
 function selectColor() {
   return exports.colors[prevColor++ % exports.colors.length];
 }
 
-/**
- * Create a debugger with the given `namespace`.
- *
- * @param {String} namespace
- * @return {Function}
- * @api public
- */
-
 function debug(namespace) {
 
-  // define the `disabled` version
   function disabled() {
   }
   disabled.enabled = false;
 
-  // define the `enabled` version
   function enabled() {
 
     var self = enabled;
-
-    // set `diff` timestamp
     var curr = +new Date();
     var ms = curr - (prevTime || curr);
     self.diff = ms;
@@ -1936,7 +1208,6 @@ function debug(namespace) {
     self.curr = curr;
     prevTime = curr;
 
-    // add the `color` if not set
     if (null == self.useColors) self.useColors = exports.useColors();
     if (null == self.color && self.useColors) self.color = selectColor();
 
@@ -1945,22 +1216,17 @@ function debug(namespace) {
     args[0] = exports.coerce(args[0]);
 
     if ('string' !== typeof args[0]) {
-      // anything else let's inspect with %o
       args = ['%o'].concat(args);
     }
 
-    // apply any `formatters` transformations
     var index = 0;
     args[0] = args[0].replace(/%([a-z%])/g, function(match, format) {
-      // if we encounter an escaped % then don't increase the array index
       if (match === '%%') return match;
       index++;
       var formatter = exports.formatters[format];
       if ('function' === typeof formatter) {
         var val = args[index];
         match = formatter.call(self, val);
-
-        // now we need to remove `args[index]` since it's inlined in the `format`
         args.splice(index, 1);
         index--;
       }
@@ -1982,14 +1248,6 @@ function debug(namespace) {
   return fn;
 }
 
-/**
- * Enables a debug mode by namespaces. This can include modes
- * separated by a colon and wildcards.
- *
- * @param {String} namespaces
- * @api public
- */
-
 function enable(namespaces) {
   exports.save(namespaces);
 
@@ -1997,7 +1255,7 @@ function enable(namespaces) {
   var len = split.length;
 
   for (var i = 0; i < len; i++) {
-    if (!split[i]) continue; // ignore empty strings
+    if (!split[i]) continue;
     namespaces = split[i].replace(/\*/g, '.*?');
     if (namespaces[0] === '-') {
       exports.skips.push(new RegExp('^' + namespaces.substr(1) + '$'));
@@ -2007,23 +1265,9 @@ function enable(namespaces) {
   }
 }
 
-/**
- * Disable debug output.
- *
- * @api public
- */
-
 function disable() {
   exports.enable('');
 }
-
-/**
- * Returns true if the given mode name is enabled, false otherwise.
- *
- * @param {String} name
- * @return {Boolean}
- * @api public
- */
 
 function enabled(name) {
   var i, len;
@@ -2040,14 +1284,6 @@ function enabled(name) {
   return false;
 }
 
-/**
- * Coerce `val`.
- *
- * @param {Mixed} val
- * @return {Mixed}
- * @api private
- */
-
 function coerce(val) {
   if (val instanceof Error) return val.stack || val.message;
   return val;
@@ -2061,19 +1297,10 @@ module.exports =  _dereq_('./lib/');
 
 module.exports = _dereq_('./socket');
 
-/**
- * Exports parser
- *
- * @api public
- *
- */
 module.exports.parser = _dereq_('engine.io-parser');
 
 },{"./socket":18,"engine.io-parser":27}],18:[function(_dereq_,module,exports){
 (function (global){
-/**
- * Module dependencies.
- */
 
 var transports = _dereq_('./transports');
 var Emitter = _dereq_('component-emitter');
@@ -2084,27 +1311,9 @@ var parseuri = _dereq_('parseuri');
 var parsejson = _dereq_('parsejson');
 var parseqs = _dereq_('parseqs');
 
-/**
- * Module exports.
- */
-
 module.exports = Socket;
 
-/**
- * Noop function.
- *
- * @api private
- */
-
 function noop(){}
-
-/**
- * Socket constructor.
- *
- * @param {String|Object} uri or options
- * @param {Object} options
- * @api public
- */
 
 function Socket(uri, opts){
   if (!(this instanceof Socket)) return new Socket(uri, opts);
@@ -2130,7 +1339,6 @@ function Socket(uri, opts){
     (global.location && 'https:' == location.protocol);
 
   if (opts.hostname && !opts.port) {
-    // if no port is specified manually, use the protocol default
     opts.port = this.secure ? '443' : '80';
   }
 
@@ -2164,7 +1372,6 @@ function Socket(uri, opts){
     this.perMessageDeflate.threshold = 1024;
   }
 
-  // SSL options for Node.js client
   this.pfx = opts.pfx || null;
   this.key = opts.key || null;
   this.passphrase = opts.passphrase || null;
@@ -2173,7 +1380,6 @@ function Socket(uri, opts){
   this.ciphers = opts.ciphers || null;
   this.rejectUnauthorized = opts.rejectUnauthorized === undefined ? true : opts.rejectUnauthorized;
 
-  // other options for Node.js client
   var freeGlobal = typeof global == 'object' && global;
   if (freeGlobal.global === freeGlobal) {
     if (opts.extraHeaders && Object.keys(opts.extraHeaders).length > 0) {
@@ -2186,37 +1392,14 @@ function Socket(uri, opts){
 
 Socket.priorWebsocketSuccess = false;
 
-/**
- * Mix in `Emitter`.
- */
-
 Emitter(Socket.prototype);
 
-/**
- * Protocol version.
- *
- * @api public
- */
-
 Socket.protocol = parser.protocol; // this is an int
-
-/**
- * Expose deps for legacy compatibility
- * and standalone browser access.
- */
 
 Socket.Socket = Socket;
 Socket.Transport = _dereq_('./transport');
 Socket.transports = _dereq_('./transports');
 Socket.parser = _dereq_('engine.io-parser');
-
-/**
- * Creates transport of the given type.
- *
- * @param {String} transport name
- * @return {Transport}
- * @api private
- */
 
 Socket.prototype.createTransport = function (name) {
   debug('creating transport "%s"', name);
@@ -2270,11 +1453,6 @@ function clone (obj) {
   return o;
 }
 
-/**
- * Initializes transport to use and starts probe.
- *
- * @api private
- */
 Socket.prototype.open = function () {
   var transport;
   if (this.rememberUpgrade && Socket.priorWebsocketSuccess && this.transports.indexOf('websocket') != -1) {
@@ -2304,12 +1482,6 @@ Socket.prototype.open = function () {
   this.setTransport(transport);
 };
 
-/**
- * Sets the current transport. Disables the existing one (if any).
- *
- * @api private
- */
-
 Socket.prototype.setTransport = function(transport){
   debug('setting transport %s', transport.name);
   var self = this;
@@ -2337,13 +1509,6 @@ Socket.prototype.setTransport = function(transport){
     self.onClose('transport close');
   });
 };
-
-/**
- * Probes a transport.
- *
- * @param {String} transport name
- * @api private
- */
 
 Socket.prototype.probe = function (name) {
   debug('probing transport "%s"', name);
@@ -2456,12 +1621,6 @@ Socket.prototype.probe = function (name) {
 
 };
 
-/**
- * Called when connection is deemed open.
- *
- * @api public
- */
-
 Socket.prototype.onOpen = function () {
   debug('socket open');
   this.readyState = 'open';
@@ -2478,12 +1637,6 @@ Socket.prototype.onOpen = function () {
     }
   }
 };
-
-/**
- * Handles a packet.
- *
- * @api private
- */
 
 Socket.prototype.onPacket = function (packet) {
   if ('opening' == this.readyState || 'open' == this.readyState) {
@@ -2520,13 +1673,6 @@ Socket.prototype.onPacket = function (packet) {
   }
 };
 
-/**
- * Called upon handshake completion.
- *
- * @param {Object} handshake obj
- * @api private
- */
-
 Socket.prototype.onHandshake = function (data) {
   this.emit('handshake', data);
   this.id = data.sid;
@@ -2544,12 +1690,6 @@ Socket.prototype.onHandshake = function (data) {
   this.on('heartbeat', this.onHeartbeat);
 };
 
-/**
- * Resets ping timeout.
- *
- * @api private
- */
-
 Socket.prototype.onHeartbeat = function (timeout) {
   clearTimeout(this.pingTimeoutTimer);
   var self = this;
@@ -2558,13 +1698,6 @@ Socket.prototype.onHeartbeat = function (timeout) {
     self.onClose('ping timeout');
   }, timeout || (self.pingInterval + self.pingTimeout));
 };
-
-/**
- * Pings server every `this.pingInterval` and expects response
- * within `this.pingTimeout` or closes connection.
- *
- * @api private
- */
 
 Socket.prototype.setPing = function () {
   var self = this;
@@ -2576,12 +1709,6 @@ Socket.prototype.setPing = function () {
   }, self.pingInterval);
 };
 
-/**
-* Sends a ping packet.
-*
-* @api private
-*/
-
 Socket.prototype.ping = function () {
   var self = this;
   this.sendPacket('ping', function(){
@@ -2589,18 +1716,9 @@ Socket.prototype.ping = function () {
   });
 };
 
-/**
- * Called on `drain` event
- *
- * @api private
- */
-
 Socket.prototype.onDrain = function() {
   this.writeBuffer.splice(0, this.prevBufferLen);
 
-  // setting prevBufferLen = 0 is very important
-  // for example, when upgrading, upgrade packet is sent over,
-  // and a nonzero prevBufferLen could cause problems on `drain`
   this.prevBufferLen = 0;
 
   if (0 === this.writeBuffer.length) {
@@ -2609,12 +1727,6 @@ Socket.prototype.onDrain = function() {
     this.flush();
   }
 };
-
-/**
- * Flush write buffers.
- *
- * @api private
- */
 
 Socket.prototype.flush = function () {
   if ('closed' != this.readyState && this.transport.writable &&
@@ -2628,31 +1740,11 @@ Socket.prototype.flush = function () {
   }
 };
 
-/**
- * Sends a message.
- *
- * @param {String} message.
- * @param {Function} callback function.
- * @param {Object} options.
- * @return {Socket} for chaining.
- * @api public
- */
-
 Socket.prototype.write =
 Socket.prototype.send = function (msg, options, fn) {
   this.sendPacket('message', msg, options, fn);
   return this;
 };
-
-/**
- * Sends a packet.
- *
- * @param {String} packet type.
- * @param {String} data.
- * @param {Object} options.
- * @param {Function} callback function.
- * @api private
- */
 
 Socket.prototype.sendPacket = function (type, data, options, fn) {
   if('function' == typeof data) {
@@ -2682,12 +1774,6 @@ Socket.prototype.sendPacket = function (type, data, options, fn) {
   if (fn) this.once('flush', fn);
   this.flush();
 };
-
-/**
- * Closes the connection.
- *
- * @api private
- */
 
 Socket.prototype.close = function () {
   if ('opening' == this.readyState || 'open' == this.readyState) {
@@ -2731,24 +1817,12 @@ Socket.prototype.close = function () {
   return this;
 };
 
-/**
- * Called upon transport error
- *
- * @api private
- */
-
 Socket.prototype.onError = function (err) {
   debug('socket error %j', err);
   Socket.priorWebsocketSuccess = false;
   this.emit('error', err);
   this.onClose('transport error', err);
 };
-
-/**
- * Called upon transport close.
- *
- * @api private
- */
 
 Socket.prototype.onClose = function (reason, desc) {
   if ('opening' == this.readyState || 'open' == this.readyState || 'closing' == this.readyState) {
@@ -2784,14 +1858,6 @@ Socket.prototype.onClose = function (reason, desc) {
   }
 };
 
-/**
- * Filters upgrades, returning only those matching client transports.
- *
- * @param {Array} server upgrades
- * @api private
- *
- */
-
 Socket.prototype.filterUpgrades = function (upgrades) {
   var filteredUpgrades = [];
   for (var i = 0, j = upgrades.length; i<j; i++) {
@@ -2802,25 +1868,11 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 
 }).call(this,typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : {})
 },{"./transport":19,"./transports":20,"component-emitter":26,"debug":14,"engine.io-parser":27,"indexof":32,"parsejson":36,"parseqs":37,"parseuri":38}],19:[function(_dereq_,module,exports){
-/**
- * Module dependencies.
- */
 
 var parser = _dereq_('engine.io-parser');
 var Emitter = _dereq_('component-emitter');
 
-/**
- * Module exports.
- */
-
 module.exports = Transport;
-
-/**
- * Transport abstract constructor.
- *
- * @param {Object} options.
- * @api private
- */
 
 function Transport (opts) {
   this.path = opts.path;
@@ -2848,19 +1900,7 @@ function Transport (opts) {
   this.extraHeaders = opts.extraHeaders;
 }
 
-/**
- * Mix in `Emitter`.
- */
-
 Emitter(Transport.prototype);
-
-/**
- * Emits an error.
- *
- * @param {String} str
- * @return {Transport} for chaining
- * @api public
- */
 
 Transport.prototype.onError = function (msg, desc) {
   var err = new Error(msg);
@@ -2869,12 +1909,6 @@ Transport.prototype.onError = function (msg, desc) {
   this.emit('error', err);
   return this;
 };
-
-/**
- * Opens the transport.
- *
- * @api public
- */
 
 Transport.prototype.open = function () {
   if ('closed' == this.readyState || '' == this.readyState) {
@@ -2885,12 +1919,6 @@ Transport.prototype.open = function () {
   return this;
 };
 
-/**
- * Closes the transport.
- *
- * @api private
- */
-
 Transport.prototype.close = function () {
   if ('opening' == this.readyState || 'open' == this.readyState) {
     this.doClose();
@@ -2900,13 +1928,6 @@ Transport.prototype.close = function () {
   return this;
 };
 
-/**
- * Sends multiple packets.
- *
- * @param {Array} packets
- * @api private
- */
-
 Transport.prototype.send = function(packets){
   if ('open' == this.readyState) {
     this.write(packets);
@@ -2915,43 +1936,20 @@ Transport.prototype.send = function(packets){
   }
 };
 
-/**
- * Called upon open
- *
- * @api private
- */
-
 Transport.prototype.onOpen = function () {
   this.readyState = 'open';
   this.writable = true;
   this.emit('open');
 };
 
-/**
- * Called with data.
- *
- * @param {String} data
- * @api private
- */
-
 Transport.prototype.onData = function(data){
   var packet = parser.decodePacket(data, this.socket.binaryType);
   this.onPacket(packet);
 };
 
-/**
- * Called with a decoded packet.
- */
-
 Transport.prototype.onPacket = function (packet) {
   this.emit('packet', packet);
 };
-
-/**
- * Called upon close.
- *
- * @api private
- */
 
 Transport.prototype.onClose = function () {
   this.readyState = 'closed';
@@ -2960,28 +1958,14 @@ Transport.prototype.onClose = function () {
 
 },{"component-emitter":26,"engine.io-parser":27}],20:[function(_dereq_,module,exports){
 (function (global){
-/**
- * Module dependencies
- */
 
 var XMLHttpRequest = _dereq_('xmlhttprequest-ssl');
 var XHR = _dereq_('./polling-xhr');
 var JSONP = _dereq_('./polling-jsonp');
 var websocket = _dereq_('./websocket');
 
-/**
- * Export transports.
- */
-
 exports.polling = polling;
 exports.websocket = websocket;
-
-/**
- * Polling transport polymorphic constructor.
- * Decides on xhr vs jsonp based on feature detection.
- *
- * @api private
- */
 
 function polling(opts){
   var xhr;
@@ -3018,50 +2002,17 @@ function polling(opts){
 },{"./polling-jsonp":21,"./polling-xhr":22,"./websocket":24,"xmlhttprequest-ssl":25}],21:[function(_dereq_,module,exports){
 (function (global){
 
-/**
- * Module requirements.
- */
 
 var Polling = _dereq_('./polling');
 var inherit = _dereq_('component-inherit');
 
-/**
- * Module exports.
- */
-
 module.exports = JSONPPolling;
-
-/**
- * Cached regular expressions.
- */
-
 var rNewline = /\n/g;
 var rEscapedNewline = /\\n/g;
-
-/**
- * Global JSONP callbacks.
- */
-
 var callbacks;
-
-/**
- * Callbacks count.
- */
-
 var index = 0;
 
-/**
- * Noop.
- */
-
 function empty () { }
-
-/**
- * JSONP Polling constructor.
- *
- * @param {Object} opts.
- * @api public
- */
 
 function JSONPPolling (opts) {
   Polling.call(this, opts);

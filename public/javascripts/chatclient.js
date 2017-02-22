@@ -4,21 +4,17 @@ var room = 'none';
 $(document).ready(function(){
     $('#acc-options-modal').modal('hide');
     $('#acc-stats-modal').modal('hide');
-
     socket.on('connect', function(){
         $('#messages').append($('<div class="panel panel-success"><div class="panel-body"><h3>Witaj</h3></div></div>'));
     });
-
     socket.on('chat message', function(login, msg, time){
            $('#messages').append($('<div class="panel panel-default"><div class="panel-body"><blockquote class="blockquote-reverse"><small><i class="fa fa-user" aria-hidden="true"></i> '+login+' <i class="fa fa-clock-o" aria-hidden="true"></i> '+time+'</small><p class="chatmessage">' + msg + '</p></blockquote></div></div>'));
         document.getElementById('messages').lastChild.scrollIntoView(false);
        });
-
     socket.on('my message', function(login, msg, time){
        $('#messages').append($('<div class="panel panel-default"><div class="panel-body"><blockquote><small><i class="fa fa-user" aria-hidden="true"></i> '+login+' <i class="fa fa-clock-o" aria-hidden="true"></i> '+time+'</small><p class="chatmessage">' + msg + '</p></blockquote></div></div>'));
         document.getElementById('messages').lastChild.scrollIntoView(false);
     });
-
     $('form').submit(function(){
         if($('#m').val().trim()!==""){
            var msg = $('#m').val();
@@ -27,11 +23,9 @@ $(document).ready(function(){
             return false;
         }
     });
-
     $( '#acc-options').on( 'click', function(){
         $('#acc-options-modal').modal('show');
     });
-
     $( '#acc-stats').on( 'click', function(){
         $('#acc-stats-modal').modal('show');
         $.ajax({
@@ -56,7 +50,6 @@ $(document).ready(function(){
             }
         });
     });
-
     $( '#frsuit').on( 'click', function(){
         $('#acc-options-modal').modal('hide');
         $.ajax({
@@ -66,7 +59,6 @@ $(document).ready(function(){
             dataType: 'text'
         });
     });
-
     $( '#gersuit').on( 'click', function(){
         $('#acc-options-modal').modal('hide');
         $.ajax({
@@ -76,6 +68,5 @@ $(document).ready(function(){
             dataType: 'text'
         });
     });
-
 });
 

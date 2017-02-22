@@ -1,27 +1,6 @@
-/*!
- * jQuery JavaScript Library v1.11.1
- * http://jquery.com/
- *
- * Includes Sizzle.js
- * http://sizzlejs.com/
- *
- * Copyright 2005, 2014 jQuery Foundation, Inc. and other contributors
- * Released under the MIT license
- * http://jquery.org/license
- *
- * Date: 2014-05-01T17:42Z
- */
-
 (function( global, factory ) {
 
 	if ( typeof module === "object" && typeof module.exports === "object" ) {
-		// For CommonJS and CommonJS-like environments where a proper window is present,
-		// execute the factory and get jQuery
-		// For environments that do not inherently posses a window with a document
-		// (such as Node.js), expose a jQuery-making factory as module.exports
-		// This accentuates the need for the creation of a real window
-		// e.g. var jQuery = require("jquery")(window);
-		// See ticket #14549 for more info
 		module.exports = global.document ?
 			factory( global, true ) :
 			function( w ) {
@@ -34,14 +13,7 @@
 		factory( global );
 	}
 
-// Pass this if window is not defined yet
 }(typeof window !== "undefined" ? window : this, function( window, noGlobal ) {
-
-// Can't do this because several apps including ASP.NET trace
-// the stack via arguments.caller.callee and Firefox dies if
-// you try to trace through "use strict" call chains. (#13335)
-// Support: Firefox 18+
-//
 
 var deletedIds = [];
 
@@ -68,20 +40,14 @@ var
 
 	// Define a local copy of jQuery
 	jQuery = function( selector, context ) {
-		// The jQuery object is actually just the init constructor 'enhanced'
-		// Need init if jQuery is called (just allow error to be thrown if not included)
 		return new jQuery.fn.init( selector, context );
 	},
 
-	// Support: Android<4.1, IE<9
-	// Make sure we trim BOM and NBSP
 	rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,
 
-	// Matches dashed string for camelizing
 	rmsPrefix = /^-ms-/,
 	rdashAlpha = /-([\da-z])/gi,
 
-	// Used by jQuery.camelCase as callback to replace()
 	fcamelCase = function( all, letter ) {
 		return letter.toUpperCase();
 	};
@@ -114,8 +80,6 @@ jQuery.fn = jQuery.prototype = {
 			slice.call( this );
 	},
 
-	// Take an array of elements and push it onto the stack
-	// (returning the new matched element set)
 	pushStack: function( elems ) {
 
 		// Build a new jQuery matched element set
@@ -129,9 +93,6 @@ jQuery.fn = jQuery.prototype = {
 		return ret;
 	},
 
-	// Execute a callback for every element in the matched set.
-	// (You can seed the arguments with an array of args, but this is
-	// only used internally.)
 	each: function( callback, args ) {
 		return jQuery.each( this, callback, args );
 	},
@@ -164,8 +125,7 @@ jQuery.fn = jQuery.prototype = {
 		return this.prevObject || this.constructor(null);
 	},
 
-	// For internal use only.
-	// Behaves like an Array's method, not like a jQuery method.
+
 	push: push,
 	sort: deletedIds.sort,
 	splice: deletedIds.splice
@@ -178,7 +138,6 @@ jQuery.extend = jQuery.fn.extend = function() {
 		length = arguments.length,
 		deep = false;
 
-	// Handle a deep copy situation
 	if ( typeof target === "boolean" ) {
 		deep = target;
 
@@ -192,26 +151,22 @@ jQuery.extend = jQuery.fn.extend = function() {
 		target = {};
 	}
 
-	// extend jQuery itself if only one argument is passed
 	if ( i === length ) {
 		target = this;
 		i--;
 	}
 
 	for ( ; i < length; i++ ) {
-		// Only deal with non-null/undefined values
 		if ( (options = arguments[ i ]) != null ) {
 			// Extend the base object
 			for ( name in options ) {
 				src = target[ name ];
 				copy = options[ name ];
 
-				// Prevent never-ending loop
 				if ( target === copy ) {
 					continue;
 				}
 
-				// Recurse if we're merging plain objects or arrays
 				if ( deep && copy && ( jQuery.isPlainObject(copy) || (copyIsArray = jQuery.isArray(copy)) ) ) {
 					if ( copyIsArray ) {
 						copyIsArray = false;
@@ -237,10 +192,8 @@ jQuery.extend = jQuery.fn.extend = function() {
 };
 
 jQuery.extend({
-	// Unique for each copy of jQuery on the page
 	expando: "jQuery" + ( version + Math.random() ).replace( /\D/g, "" ),
 
-	// Assume jQuery is ready without the ready module
 	isReady: true,
 
 	error: function( msg ) {
@@ -249,9 +202,6 @@ jQuery.extend({
 
 	noop: function() {},
 
-	// See test/unit/core.js for details concerning isFunction.
-	// Since version 1.3, DOM methods and functions like alert
-	// aren't supported. They return false on IE (#2968).
 	isFunction: function( obj ) {
 		return jQuery.type(obj) === "function";
 	},
@@ -266,9 +216,7 @@ jQuery.extend({
 	},
 
 	isNumeric: function( obj ) {
-		// parseFloat NaNs numeric-cast false positives (null|true|false|"")
-		// ...but misinterprets leading-number strings, particularly hex literals ("0x...")
-		// subtraction forces infinities to NaN
+	
 		return !jQuery.isArray( obj ) && obj - parseFloat( obj ) >= 0;
 	},
 
@@ -283,9 +231,6 @@ jQuery.extend({
 	isPlainObject: function( obj ) {
 		var key;
 
-		// Must be an Object.
-		// Because of IE, we also have to check the presence of the constructor property.
-		// Make sure that DOM nodes and window objects don't pass through, as well
 		if ( !obj || jQuery.type(obj) !== "object" || obj.nodeType || jQuery.isWindow( obj ) ) {
 			return false;
 		}
@@ -298,20 +243,15 @@ jQuery.extend({
 				return false;
 			}
 		} catch ( e ) {
-			// IE8,9 Will throw exceptions on certain host objects #9897
 			return false;
 		}
 
-		// Support: IE<9
-		// Handle iteration over inherited properties before own properties.
 		if ( support.ownLast ) {
 			for ( key in obj ) {
 				return hasOwn.call( obj, key );
 			}
 		}
 
-		// Own properties are enumerated firstly, so to speed up,
-		// if last one is own, then all properties are own.
 		for ( key in obj ) {}
 
 		return key === undefined || hasOwn.call( obj, key );
@@ -326,22 +266,14 @@ jQuery.extend({
 			typeof obj;
 	},
 
-	// Evaluates a script in a global context
-	// Workarounds based on findings by Jim Driscoll
-	// http://weblogs.java.net/blog/driscoll/archive/2009/09/08/eval-javascript-global-context
 	globalEval: function( data ) {
 		if ( data && jQuery.trim( data ) ) {
-			// We use execScript on Internet Explorer
-			// We use an anonymous function so that context is window
-			// rather than jQuery in Firefox
 			( window.execScript || function( data ) {
 				window[ "eval" ].call( window, data );
 			} )( data );
 		}
 	},
 
-	// Convert dashed to camelCase; used by the css and data modules
-	// Microsoft forgot to hump their vendor prefix (#9572)
 	camelCase: function( string ) {
 		return string.replace( rmsPrefix, "ms-" ).replace( rdashAlpha, fcamelCase );
 	},
@@ -476,8 +408,6 @@ jQuery.extend({
 			length = elems.length,
 			callbackExpect = !invert;
 
-		// Go through the array, only saving the items
-		// that pass the validator function
 		for ( ; i < length; i++ ) {
 			callbackInverse = !callback( elems[ i ], i );
 			if ( callbackInverse !== callbackExpect ) {
@@ -535,8 +465,6 @@ jQuery.extend({
 			fn = tmp;
 		}
 
-		// Quick check to determine if target is callable, in the spec
-		// this throws a TypeError, but we will just return undefined.
 		if ( !jQuery.isFunction( fn ) ) {
 			return undefined;
 		}
@@ -583,16 +511,7 @@ function isArraylike( obj ) {
 		typeof length === "number" && length > 0 && ( length - 1 ) in obj;
 }
 var Sizzle =
-/*!
- * Sizzle CSS Selector Engine v1.10.19
- * http://sizzlejs.com/
- *
- * Copyright 2013 jQuery Foundation, Inc. and other contributors
- * Released under the MIT license
- * http://jquery.org/license
- *
- * Date: 2014-04-18
- */
+
 (function( window ) {
 
 var i,
@@ -657,19 +576,13 @@ var i,
 
 	booleans = "checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|ismap|loop|multiple|open|readonly|required|scoped",
 
-	// Regular expressions
-
-	// Whitespace characters http://www.w3.org/TR/css3-selectors/#whitespace
 	whitespace = "[\\x20\\t\\r\\n\\f]",
-	// http://www.w3.org/TR/css3-syntax/#characters
 	characterEncoding = "(?:\\\\.|[\\w-]|[^\\x00-\\xa0])+",
 
-	// Loosely modeled on CSS identifier characters
-	// An unquoted value should be a CSS identifier http://www.w3.org/TR/css3-selectors/#attribute-selectors
-	// Proper syntax: http://www.w3.org/TR/CSS21/syndata.html#value-def-identifier
+
 	identifier = characterEncoding.replace( "w", "w#" ),
 
-	// Attribute selectors: http://www.w3.org/TR/selectors/#attribute-selectors
+
 	attributes = "\\[" + whitespace + "*(" + characterEncoding + ")(?:" + whitespace +
 		// Operator (capture 2)
 		"*([*^$|!~]?=)" + whitespace +
@@ -7135,26 +7048,16 @@ function defaultPrefilter( elem, props, opts ) {
 		});
 	}
 
-	// height/width overflow pass
 	if ( elem.nodeType === 1 && ( "height" in props || "width" in props ) ) {
-		// Make sure that nothing sneaks out
-		// Record all 3 overflow attributes because IE does not
-		// change the overflow attribute when overflowX and
-		// overflowY are set to the same value
 		opts.overflow = [ style.overflow, style.overflowX, style.overflowY ];
 
-		// Set display property to inline-block for height/width
-		// animations on inline elements that are having width/height animated
 		display = jQuery.css( elem, "display" );
 
-		// Test default display if display is currently "none"
 		checkDisplay = display === "none" ?
 			jQuery._data( elem, "olddisplay" ) || defaultDisplay( elem.nodeName ) : display;
 
 		if ( checkDisplay === "inline" && jQuery.css( elem, "float" ) === "none" ) {
 
-			// inline-level elements accept inline-block;
-			// block-level elements need to be inline with layout
 			if ( !support.inlineBlockNeedsLayout || defaultDisplay( elem.nodeName ) === "inline" ) {
 				style.display = "inline-block";
 			} else {
@@ -7174,7 +7077,6 @@ function defaultPrefilter( elem, props, opts ) {
 		}
 	}
 
-	// show/hide pass
 	for ( prop in props ) {
 		value = props[ prop ];
 		if ( rfxtypes.exec( value ) ) {
@@ -7191,7 +7093,6 @@ function defaultPrefilter( elem, props, opts ) {
 			}
 			orig[ prop ] = dataShow && dataShow[ prop ] || jQuery.style( elem, prop );
 
-		// Any non-fx value stops us from restoring the original display value
 		} else {
 			display = undefined;
 		}
@@ -7236,7 +7137,6 @@ function defaultPrefilter( elem, props, opts ) {
 			}
 		}
 
-	// If this is a noop like .hide().hide(), restore an overwritten display value
 	} else if ( (display === "none" ? defaultDisplay( elem.nodeName ) : display) === "inline" ) {
 		style.display = display;
 	}
@@ -7245,7 +7145,6 @@ function defaultPrefilter( elem, props, opts ) {
 function propFilter( props, specialEasing ) {
 	var index, name, easing, value, hooks;
 
-	// camelCase, specialEasing and expand cssHook pass
 	for ( index in props ) {
 		name = jQuery.camelCase( index );
 		easing = specialEasing[ name ];
@@ -7265,8 +7164,6 @@ function propFilter( props, specialEasing ) {
 			value = hooks.expand( value );
 			delete props[ name ];
 
-			// not quite $.extend, this wont overwrite keys already present.
-			// also - reusing 'index' from above because we have the correct "name"
 			for ( index in value ) {
 				if ( !( index in props ) ) {
 					props[ index ] = value[ index ];
@@ -7285,7 +7182,6 @@ function Animation( elem, properties, options ) {
 		index = 0,
 		length = animationPrefilters.length,
 		deferred = jQuery.Deferred().always( function() {
-			// don't match elem in the :animated selector
 			delete tick.elem;
 		}),
 		tick = function() {
@@ -7330,8 +7226,6 @@ function Animation( elem, properties, options ) {
 			},
 			stop: function( gotoEnd ) {
 				var index = 0,
-					// if we are going to the end, we want to run all the tweens
-					// otherwise we skip this part
 					length = gotoEnd ? animation.tweens.length : 0;
 				if ( stopped ) {
 					return this;
@@ -7341,8 +7235,6 @@ function Animation( elem, properties, options ) {
 					animation.tweens[ index ].run( 1 );
 				}
 
-				// resolve when we played the last frame
-				// otherwise, reject
 				if ( gotoEnd ) {
 					deferred.resolveWith( elem, [ animation, gotoEnd ] );
 				} else {
@@ -10092,8 +9984,6 @@ jQuery.fn.extend({
 			return box;
 		}
 
-		// If we don't have gBCR, just use 0,0 rather than error
-		// BlackBerry 5, iOS 3 (original iPhone)
 		if ( typeof elem.getBoundingClientRect !== strundefined ) {
 			box = elem.getBoundingClientRect();
 		}
@@ -10132,9 +10022,6 @@ jQuery.fn.extend({
 			parentOffset.left += jQuery.css( offsetParent[ 0 ], "borderLeftWidth", true );
 		}
 
-		// Subtract parent offsets and element margins
-		// note: when an element has margin: auto the offsetLeft and marginLeft
-		// are the same in Safari causing offset.left to incorrectly be 0
 		return {
 			top:  offset.top  - parentOffset.top - jQuery.css( elem, "marginTop", true ),
 			left: offset.left - parentOffset.left - jQuery.css( elem, "marginLeft", true)
@@ -10180,10 +10067,6 @@ jQuery.each( { scrollLeft: "pageXOffset", scrollTop: "pageYOffset" }, function( 
 	};
 });
 
-// Add the top/left cssHooks using jQuery.fn.position
-// Webkit bug: https://bugs.webkit.org/show_bug.cgi?id=29084
-// getComputedStyle returns percent when specified for top/left/bottom/right
-// rather than make the css module depend on the offset module, we just check for it here
 jQuery.each( [ "top", "left" ], function( i, prop ) {
 	jQuery.cssHooks[ prop ] = addGetHookIf( support.pixelPosition,
 		function( elem, computed ) {
@@ -10211,13 +10094,10 @@ jQuery.each( { Height: "height", Width: "width" }, function( name, type ) {
 				var doc;
 
 				if ( jQuery.isWindow( elem ) ) {
-					// As of 5/8/2012 this will yield incorrect results for Mobile Safari, but there
-					// isn't a whole lot we can do. See pull request at this URL for discussion:
-					// https://github.com/jquery/jquery/pull/764
+					
 					return elem.document.documentElement[ "client" + name ];
 				}
 
-				// Get document width or height
 				if ( elem.nodeType === 9 ) {
 					doc = elem.documentElement;
 
@@ -10241,29 +10121,11 @@ jQuery.each( { Height: "height", Width: "width" }, function( name, type ) {
 	});
 });
 
-
-// The number of elements contained in the matched element set
 jQuery.fn.size = function() {
 	return this.length;
 };
 
 jQuery.fn.andSelf = jQuery.fn.addBack;
-
-
-
-
-// Register as a named AMD module, since jQuery can be concatenated with other
-// files that may use define, but not via a proper concatenation script that
-// understands anonymous AMD modules. A named AMD is safest and most robust
-// way to register. Lowercase jquery is used because AMD module names are
-// derived from file names, and jQuery is normally delivered in a lowercase
-// file name. Do this after creating the global so that if an AMD module wants
-// to call noConflict to hide this version of jQuery, it will work.
-
-// Note that for maximum portability, libraries that are not jQuery should
-// declare themselves as anonymous modules, and avoid setting a global if an
-// AMD loader is present. jQuery is a special case. For more information, see
-// https://github.com/jrburke/requirejs/wiki/Updating-existing-libraries#wiki-anon
 
 if ( typeof define === "function" && define.amd ) {
 	define( "jquery", [], function() {
@@ -10275,10 +10137,7 @@ if ( typeof define === "function" && define.amd ) {
 
 
 var
-	// Map over jQuery in case of overwrite
 	_jQuery = window.jQuery,
-
-	// Map over the $ in case of overwrite
 	_$ = window.$;
 
 jQuery.noConflict = function( deep ) {
@@ -10293,9 +10152,6 @@ jQuery.noConflict = function( deep ) {
 	return jQuery;
 };
 
-// Expose jQuery and $ identifiers, even in
-// AMD (#7102#comment:10, https://github.com/jquery/jquery/pull/557)
-// and CommonJS for browser emulators (#13566)
 if ( typeof noGlobal === strundefined ) {
 	window.jQuery = window.$ = jQuery;
 }

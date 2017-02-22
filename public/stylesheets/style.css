@@ -1,14 +1,3 @@
-/*::-webkit-scrollbar
-{
-    width: 0px;
-}
-::-webkit-scrollbar-track-piece
-{
-    background-color: transparent;
-    -webkit-border-radius: 6px;
-}*/
-
-
 ::-webkit-scrollbar {
     width: 4px;
     height: 4px;
@@ -42,9 +31,6 @@
 ::-webkit-scrollbar-corner {
     background: transparent;
 }
-
-
-
 #lobby-well {
     overflow-y:auto;
     height:500px;
@@ -80,7 +66,6 @@
 .first-player-cards, .second-player-cards, .middle-cards, .mycards{
     height:110px;
 }
-
 .extra-large{
     font-size: 100px;
 }
@@ -100,10 +85,9 @@ margin-top: 50px;
     opacity: 0.7;
 }
 .chat-image{
-    background: url(../images/img/chatbackground.png) no-repeat center center;
+    background: url(../images/img/chatbackground.jpg) no-repeat center center;
     background-size: cover;
 }
-
 .game-image{
     background: url(../images/img/gamebackground.jpg) no-repeat center center;
     background-size: cover;
@@ -112,32 +96,26 @@ margin-top: 50px;
 .container-fluid{
 padding: 50px!important;
 }
-
 .button-top-offset{
 margin-top:25px;
 }
-
 .form-offset {
     margin-top: 50px;
     padding:50px;
 }
-
 ul{
   list-style-type: none;
 }
-
 .middle-cards{
     height: 125px;
     margin-top:50px;
     margin-bottom:100px;
 }
-
 body,
 html {
     width: 100%;
     height: 100%;
 }
-
 body,
 h1,
 h2,
@@ -148,16 +126,13 @@ h6 {
     font-family: "Lato","Helvetica Neue",Helvetica,Arial,sans-serif;
     font-weight: 700;
 }
-
 .topnav {
     font-size: 14px;
 }
-
 .lead {
     font-size: 18px;
     font-weight: 400;
 }
-
 .intro-header {
     padding-top: 50px;
     padding-bottom: 50px;
@@ -166,29 +141,24 @@ h6 {
     background: url(../images/img/intro.jpg) no-repeat center center;
     background-size: cover;
 }
-
 .intro-message {
     position: relative;
     padding-top: 20%;
     padding-bottom: 20%;
 }
-
 .intro-message > h1 {
     margin: 0;
     text-shadow: 2px 2px 3px rgba(0,0,0,0.6);
     font-size: 5em;
 }
-
 .intro-divider {
     width: 400px;
     border-top: 1px solid #f8f8f8;
     border-bottom: 1px solid rgba(0,0,0,0.2);
 }
-
 .intro-message > h3 {
     text-shadow: 2px 2px 3px rgba(0,0,0,0.6);
 }
-
 @media(max-width:767px) {
     .intro-message {
         padding-bottom: 15%;
@@ -212,65 +182,53 @@ h6 {
         width: 100%;
     }
 }
-
 .network-name {
     text-transform: uppercase;
     font-size: 14px;
     font-weight: 400;
     letter-spacing: 2px;
 }
-
 .content-section-a {
     padding: 50px 0;
     background-color: #f8f8f8;
 }
-
 .content-section-b {
     padding: 50px 0;
     border-top: 1px solid #e7e7e7;
     border-bottom: 1px solid #e7e7e7;
 }
-
 .section-heading {
     margin-bottom: 30px;
 }
-
 .section-heading-spacer {
     float: left;
     width: 200px;
     border-top: 3px solid #e7e7e7;
 }
-
-
 .banner {
     padding: 100px 0;
     color: #f8f8f8;
     background: url(../images/img/banner-bg.jpg) no-repeat center center;
     background-size: cover;
 }
-
 .banner h2 {
     margin: 0;
     text-shadow: 2px 2px 3px rgba(0,0,0,0.6);
     font-size: 3em;
 }
-
 .banner ul {
     margin-bottom: 0;
 }
-
 .banner-social-buttons {
     float: right;
     margin-top: 0;
 }
-
 @media(max-width:1199px) {
     ul.banner-social-buttons {
         float: left;
         margin-top: 15px;
     }
 }
-
 @media(max-width:767px) {
     .banner h2 {
         margin: 0;
@@ -288,12 +246,10 @@ h6 {
         margin-bottom: 0;
     }
 }
-
 footer {
     padding: 50px 0;
     background-color: #f8f8f8;
 }
-
 p.copyright {
     margin: 15px 0 0;
 }
