@@ -51,7 +51,7 @@ var app = express();
 app.io = require('socket.io')();
 var store = new MongoDBStore(
     {
-        uri: 'mongodb://magisterka:administrator@ds215633.mlab.com:15633/mongodb_session',
+        uri: 'mongodb://magisterka:administrator11@ds215633.mlab.com:15633/mongodb_session',
         collection: 'mysessions'
     });
 app.use(session({
