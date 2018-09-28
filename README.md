@@ -44,3 +44,5 @@ Celem aplikacji internetowej jest umożliwienie gry w Skata. Program ma ułatwi�
   <li>jQuery</li>
   <li>Animate.css</li>
 </ul>
+
+![Screenshot](dpu.png)
