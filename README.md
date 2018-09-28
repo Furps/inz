@@ -14,7 +14,7 @@ być zrealizowana poprzez umożliwienie logowania za pomocą konta na portalu sp
   <li>Socket.io,</li>
   <li>Bcrypt.js,</li>
   <li>Express,</li>
-  <li>Body-parse,r</li>
+  <li>Body-parser,</li>
   <li>Express-session,</li>
   <li>Mongoose,</li>
   <li>Connect-mongodb-session,</li>
