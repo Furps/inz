@@ -9,7 +9,7 @@ var flash = require('connect-flash');
 var session = require('express-session');
 var passport = require('passport');
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://magisterka:administrator11ds115543.mlab.com:15543/databasemy');
+mongoose.connect('mongodb://magisterka:administrator11@ds115543.mlab.com:15543/databasemy');
 var MongoDBStore = require('connect-mongodb-session')(session);
 var routes = require('./routes/index');
 var users = require('./routes/users');
