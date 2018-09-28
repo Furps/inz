@@ -10,24 +10,24 @@ być zrealizowana poprzez umożliwienie logowania za pomocą konta na portalu sp
 <h3>Technologia</h3>
 <h4>Serwer</h4>
 <ul>
-  <li>Node.js,</li>
-  <li>Socket.io,</li>
-  <li>Bcrypt.js,</li>
-  <li>Express,</li>
-  <li>Body-parser,</li>
-  <li>Express-session,</li>
-  <li>Mongoose,</li>
-  <li>Connect-mongodb-session,</li>
-  <li>Passport-facebook,</li>
-  <li>Passport-local,</li>
-  <li>Hbs.</li>
+  <li>Node.js</li>
+  <li>Socket.io</li>
+  <li>Bcrypt.js</li>
+  <li>Express</li>
+  <li>Body-parser</li>
+  <li>Express-session</li>
+  <li>Mongoose</li>
+  <li>Connect-mongodb-session</li>
+  <li>Passport-facebook</li>
+  <li>Passport-local</li>
+  <li>Hbs</li>
  </ul>
 <h4>Klient</h4>
 <ul>
-  <li>Socket.io,</li>
-  <li>Bootstrap,</li>
-  <li>jQuery,</li>
-  <li>Animate.css.</li>
+  <li>Socket.io</li>
+  <li>Bootstrap</li>
+  <li>jQuery</li>
+  <li>Animate.css</li>
 </ul>
 
 <h3>Wymagania funkcjonalne</h3>
