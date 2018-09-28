@@ -17,14 +17,14 @@
     "express-validator": "latest",
     "hbs": "~4.0.0",
     "mongodb": "~3.1.6",
-    "mongoose": "latest",
+    "mongoose": "~5.2.18",
     "morgan": "~1.7.0",
     "passport": "latest",
     "passport-facebook": "latest",
     "passport-local": "^1.0.0",
     "serve-favicon": "~2.3.0",
     "socket.io": "latest",
-    "connect-mongodb-session": "latest",
+    "connect-mongodb-session": "~2.0.3",
     "passport.socketio": "~3.7.0"
   }
 }
