@@ -9,7 +9,7 @@ var flash = require('connect-flash');
 var session = require('express-session');
 var passport = require('passport');
 var mongoose = require('mongoose');
-mongoose.connect('mongodb://magisterka:Haslo12!@ds115543.mlab.com:15543/databasemy');
+mongoose.connect('mongodb://magisterka:haslodobazy1!ds115543.mlab.com:15543/databasemy');
 var MongoDBStore = require('connect-mongodb-session')(session);
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -51,7 +51,7 @@ var app = express();
 app.io = require('socket.io')();
 var store = new MongoDBStore(
     {
-        uri: 'mongodb://magisterka:Haslo12!@ds215633.mlab.com:15633/mongodb_session',
+        uri: 'mongodb://magisterka:haslodobazy1!@ds215633.mlab.com:15633/mongodb_session',
         collection: 'mysessions'
     });
 app.use(session({
