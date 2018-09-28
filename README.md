@@ -37,3 +37,10 @@ Celem aplikacji internetowej jest umożliwienie gry w Skata. Program ma ułatwi�
   <li>Passport-local</li>
   <li>Hbs</li>
  </ul>
+<h4>Klient</h4>
+<ul>
+  <li>Socket.io</li>
+  <li>Bootstrap</li>
+  <li>jQuery</li>
+  <li>Animate.css</li>
+</ul>
