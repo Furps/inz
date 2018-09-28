@@ -1,7 +1,6 @@
 # Skat
-Przejdź do aplikacji <br>
-https://skatinz.herokuapp.com/ <br>
-lub zobacz filmiki z rozgrywki <br>
+Przejdź do aplikacji https://skatinz.herokuapp.com/ <br>
+lub zobacz filmiki z rozgrywki
 https://www.dropbox.com/sh/0ez947x35onq2k6/AAAViO8UPtCztLqVcU_6w5eha?dl=0
 
 <h2>Opis aplikacji</h2>
