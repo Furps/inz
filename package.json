@@ -16,7 +16,7 @@
     "express-session": "latest",
     "express-validator": "latest",
     "hbs": "~4.0.0",
-    "mongodb": "latest",
+    "mongodb": "~3.1.6",
     "mongoose": "latest",
     "morgan": "~1.7.0",
     "passport": "latest",
