@@ -1,2 +1,7 @@
-# inz
-span class="badge badge-danger">Danger</span>
+# Skat
+<ul>
+  <li>Coffee</li>
+  <li>Tea</li>
+  <li>Milk</li>
+</ul>
+
