@@ -30,7 +30,7 @@ $(document).ready(function(){
         $('#acc-stats-modal').modal('show');
         $.ajax({
             type: "POST",
-            url: 'http://inz.herokuapp.com/users/lobby',
+            url: 'http://skatinz.herokuapp.com/users/lobby',
             dataType: "json",
             success:function(data) {
                 $(".error").hide();
@@ -54,7 +54,7 @@ $(document).ready(function(){
         $('#acc-options-modal').modal('hide');
         $.ajax({
             type: "POST",
-            url: 'http://inz.herokuapp.com/users/suits',
+            url: 'http://skatinz.herokuapp.com/users/suits',
             data: {suit:'french'},
             dataType: 'text'
         });
@@ -63,7 +63,7 @@ $(document).ready(function(){
         $('#acc-options-modal').modal('hide');
         $.ajax({
             type: "POST",
-            url: 'http://inz.herokuapp.com/users/suits',
+            url: 'http://skatinz.herokuapp.com/users/suits',
             data: {suit:'german'},
             dataType: 'text'
         });
