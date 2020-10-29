@@ -46,6 +46,7 @@ The main purpose of this application is to let people play Skat. In this program
 </ul>
 
 <br>
+
 # Skat
 przejdź do aplikacji: https://skatinz.herokuapp.com/ <br>
 lub zobacz filmiki z rozgrywki:
