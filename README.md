@@ -29,6 +29,22 @@ The main purpose of this application is to let people play Skat. In this program
   <li>Animate.css</li>
 </ul>
 
+<h3>Functional requirement</h3>
+<ul>
+  <li>User must be able to register,</li>
+  <li>User must be able to log in,</li>
+  <li>User must be able to log in via Facebook account,</li>
+  <li>User must be able to display his statistics (games played, games won, the highest declared value, games won divided into categories),</li>
+  <li>User must be able to play with other users,</li>
+  <li>User must be able to play with computer,</li>
+  <li>User must be able to communicate with other users via chat,</li>
+  <li>User must be able to choose deck suits (german and french available),</li>
+  <li>System must have polish interface,</li>
+  <li>System must have responsive interface,</li>
+  <li>System must have web page as interface,</li>
+  <li>System must react to the disconnection of the player during the game (appropriate information about further possible steps).</li>
+</ul>
+
 <br><br>
 # Skat
 przejdź do aplikacji: https://skatinz.herokuapp.com/ <br>
