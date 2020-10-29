@@ -8,11 +8,34 @@ lub zobacz filmiki z rozgrywki:
 https://www.dropbox.com/sh/0ez947x35onq2k6/AAAViO8UPtCztLqVcU_6w5eha?dl=0
 
 <h2>Application description</h2>
-The main purpose of this application is to let people play Skat. In this program all micropayments have been eliminated to make it more playable. Skat is a web application, because the idea was to get to as many people as possible. User can log in via facebook account and choose french-suited cards (an option dedicated especially to young players to make this application popular among them).
+The main purpose of this application is to let people play Skat. In this program all micropayments have been eliminated to make it more playable. Skat is a web application, because the idea was to get to as many people as possible. User can log in via Facebook account and choose french-suited cards (an option dedicated especially to young players to make this application popular among them).
 
 <h2>Opis aplikacji</h2>
 Celem aplikacji internetowej jest umożliwienie gry w Skata. Program ma ułatwić rozgrywkę poprzez eliminację mikropłatności oraz interfejs w języku polskim. Aby dotrzeć do jak największej liczby graczy ma to być aplikacja internetowa. Realizacja celu pozyskania młodych graczy ma 
 być zrealizowana poprzez umożliwienie logowania za pomocą konta na portalu społecznościowym Facebook oraz poprzez talię kart francuskich.
+
+<h3>Technology</h3>
+<h4>Server</h4>
+<ul>
+  <li>Node.js</li>
+  <li>Socket.io</li>
+  <li>Bcrypt.js</li>
+  <li>Express</li>
+  <li>Body-parser</li>
+  <li>Express-session</li>
+  <li>Mongoose</li>
+  <li>Connect-mongodb-session</li>
+  <li>Passport-facebook</li>
+  <li>Passport-local</li>
+  <li>Hbs</li>
+ </ul>
+<h4>Client</h4>
+<ul>
+  <li>Socket.io</li>
+  <li>Bootstrap</li>
+  <li>jQuery</li>
+  <li>Animate.css</li>
+</ul>
 
 <h3>Technologia</h3>
 <h4>Serwer</h4>
