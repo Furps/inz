@@ -45,7 +45,7 @@ The main purpose of this application is to let people play Skat. In this program
   <li>System must react to the disconnection of the player during the game (appropriate information about further possible steps).</li>
 </ul>
 
-<br><br>
+<br>
 # Skat
 przejdź do aplikacji: https://skatinz.herokuapp.com/ <br>
 lub zobacz filmiki z rozgrywki:
