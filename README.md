@@ -29,7 +29,7 @@ The main purpose of this application is to let people play Skat. In this program
   <li>Animate.css</li>
 </ul>
 
-<h3>Functional requirement</h3>
+<h3>Functional requirements</h3>
 <ul>
   <li>User must be able to register,</li>
   <li>User must be able to log in,</li>
