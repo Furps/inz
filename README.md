@@ -1,4 +1,8 @@
 # Skat
+go to application: https://skatinz.herokuapp.com/ <br>
+see game videos:
+https://www.dropbox.com/sh/0ez947x35onq2k6/AAAViO8UPtCztLqVcU_6w5eha?dl=0
+<br>
 Przejdź do aplikacji: https://skatinz.herokuapp.com/ <br>
 lub zobacz filmiki z rozgrywki:
 https://www.dropbox.com/sh/0ez947x35onq2k6/AAAViO8UPtCztLqVcU_6w5eha?dl=0
